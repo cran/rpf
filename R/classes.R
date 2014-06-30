@@ -189,7 +189,7 @@ setMethod("rpf.dLL", signature(m="rpf.base", param="numeric",
             }
           })
 
-##' Item derivatives with respect to ability
+##' Item derivatives with respect to the location in the latent space
 ##'
 ##' Evaluate the partial derivatives of the response probability with
 ##' respect to ability.
@@ -284,7 +284,8 @@ setGeneric("rpf.prob", function(m, param, theta) standardGeneric("rpf.prob"))
 ##' probability vector
 ##'
 ##' Note that in general, exp(rpf.logprob(..)) != rpf.prob(..) because
-##' the range of logits is much wider than the range of probabilities.
+##' the range of logits is much wider than the range of probabilities
+##' due to limitations of floating point numerical precision.
 ##' 
 ##' @param m an item model
 ##' @param param item parameters
@@ -409,9 +410,12 @@ rpf.info <- function(ii, ii.p, where, basis=1) {
 
 ##' Generates item parameters
 ##'
-##' This function generates random item parameters.
+##' This function generates random item parameters. The version
+##' argument is available if you are writing a test that depends on
+##' reproducable random parameters (using \code{set.seed}).
 ##' 
 ##' @param m an item model
+##' @param version the version of random parameters
 ##' @return item parameters
 ##' @docType methods
 ##' @aliases
@@ -425,7 +429,7 @@ rpf.info <- function(ii, ii.p, where, basis=1) {
 ##' @examples
 ##' i1 <- rpf.drm()
 ##' rpf.rparam(i1)
-setGeneric("rpf.rparam", function(m) standardGeneric("rpf.rparam"))
+setGeneric("rpf.rparam", function(m, version=2L) standardGeneric("rpf.rparam"))
 
 ##' The ogive constant
 ##'
@@ -535,7 +539,7 @@ setClass("rpf.mdim.nrm", contains='rpf.mdim')
 ##' @aliases rpf.mdim.mcm-class
 setClass("rpf.mdim.mcm", contains='rpf.mdim')
 
-##' Convert an IRT item model name to an ID
+##' Convert an rpf item model name to an ID
 ##'
 ##' This is an internal function and should not be used.
 ##'
