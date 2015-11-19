@@ -329,7 +329,11 @@ SitemFit1Internal <- function(out) {
     mask <- apply(observed, 1, sum) != 0
     observed = observed[mask,,drop=FALSE]
     expected = expected[mask,,drop=FALSE]
-    if (!length(observed)) stop("No data for item")
+	if (!length(observed)) {
+		out$statistic <- NA
+		out$pval <- NA
+		return(out)
+	}
 
 	method <- out$method
     if (method == "pearson") {
@@ -479,6 +483,7 @@ ot2000md <- function(grp, item, width, pts, alt=FALSE, mask, .twotier) {
 ##' @param alt whether to include the item of interest in the denominator
 ##' @param omit number of items to omit (a single number) or a list of the length the number of items
 ##' @param .twotier whether to enable the two-tier optimization
+##' @param .parallel whether to take advantage of multiple CPUs (default TRUE)
 ##' @return
 ##' a list of output from \code{\link{SitemFit1}}
 ##' @examples
@@ -492,7 +497,7 @@ ot2000md <- function(grp, item, width, pts, alt=FALSE, mask, .twotier) {
 ##' grp$data <- rpf.sample(500, grp=grp)
 ##' SitemFit(grp)
 SitemFit <- function(grp, ..., method="pearson", log=TRUE, qwidth=6, qpoints=49L,
-		     alt=FALSE, omit=0L, .twotier=TRUE) {
+		     alt=FALSE, omit=0L, .twotier=TRUE, .parallel=TRUE) {
 	if (length(list(...)) > 0) {
 		stop(paste("Remaining parameters must be passed by name", deparse(list(...))))
 	}
@@ -505,7 +510,8 @@ SitemFit <- function(grp, ..., method="pearson", log=TRUE, qwidth=6, qpoints=49L
     if (ncol(param) != length(spec)) stop("Dim mismatch between param and spec")
     if (is.null(colnames(param))) stop("grp$param must have column names")
 
-	got <- mclapply(1:length(spec), function(interest) {
+	.la <- ifelse(.parallel, mclapply, lapply)
+	got <- .la(1:length(spec), function(interest) {
 		free <- 0
 		if (!is.null(grp$free)) free <- sum(grp$free[,interest])
 		itemname <- colnames(param)[interest]
@@ -644,8 +650,9 @@ ptw2011.gof.test <- function(observed, expected) {
   }
   if (any(c(expected)==0)) {
 	  zeros <- sum(c(expected)==0)
-	  stop(paste("There are", zeros, "zeros in the expected distribution.",
+	  warning(paste("There are", zeros, "zeros in the expected distribution.",
 		     "Did you swap the observed and expected arguments"))
+	  return(NA)
   }
   observed <- observed / orig.draws
   expected <- expected / orig.draws
@@ -784,6 +791,7 @@ tableWithWeights <- function(colpair, weights) {
 ##' @param method method to use to calculate P values. The default is the
 ##' Pearson X^2 statistic. Use "lr" for the similar likelihood ratio statistic.
 ##' @param .twotier whether to enable the two-tier optimization
+##' @param .parallel whether to take advantage of multiple CPUs (default TRUE)
 ##' @return a list with raw, pval and detail. The pval matrix is a
 ##' lower triangular matrix of log P values with the sign
 ##' determined by relative association between the observed and
@@ -801,7 +809,8 @@ tableWithWeights <- function(colpair, weights) {
 ##' adaptive testing: A case for testlets.  \emph{Journal of
 ##' Educational measurement, 24}(3), 185--201.
 ##' @seealso \href{https://github.com/jpritikin/ifaTools}{ifaTools}
-ChenThissen1997 <- function(grp, ..., data=NULL, inames=NULL, qwidth=6, qpoints=49, method="pearson", .twotier=TRUE) {
+ChenThissen1997 <- function(grp, ..., data=NULL, inames=NULL, qwidth=6, qpoints=49, method="pearson",
+			    .twotier=TRUE, .parallel=TRUE) {
 	if (length(list(...)) > 0) {
 		stop(paste("Remaining parameters must be passed by name", deparse(list(...))))
 	}
@@ -845,7 +854,8 @@ ChenThissen1997 <- function(grp, ..., data=NULL, inames=NULL, qwidth=6, qpoints=
 			pairs[[ 1+length(pairs) ]] <- c(iter1, iter2)
 		}
 	}
-	detail <- mclapply(pairs, function(pair) {
+	.la <- ifelse(.parallel, mclapply, lapply)
+	detail <- .la(pairs, function(pair) {
 		iter1 <- pair[1]
 		iter2 <- pair[2]
 		i1 <- items[iter1]
