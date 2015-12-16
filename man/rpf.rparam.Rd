@@ -5,6 +5,7 @@
 \alias{rpf.rparam}
 \alias{rpf.rparam,rpf.1dim.drm-method}
 \alias{rpf.rparam,rpf.1dim.graded-method}
+\alias{rpf.rparam,rpf.1dim.lmp-method}
 \alias{rpf.rparam,rpf.mdim.drm-method}
 \alias{rpf.rparam,rpf.mdim.graded-method}
 \alias{rpf.rparam,rpf.mdim.mcm-method}
