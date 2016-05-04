@@ -1,4 +1,4 @@
-05713388441647a6e9a82012d99f960d *DESCRIPTION
+3da3e16e1f77ddf853324c62931d8dfd *DESCRIPTION
 48968d3309c8b49c65043627aebec827 *NAMESPACE
 ca6770ad1a93693af31128bee7e3d2c1 *R/LSAT.R
 e4ca741cdeb919205554a2ccc6ff93bd *R/classes.R
@@ -30,10 +30,10 @@ acd7fd858693859e265cb71040811889 *configure
 fc4e21b1c3b6823fafd6bc7de313f3db *inst/doc/customitem.html
 c1a4cc25de0bc56780c7f363e6eddf3b *inst/doc/diagnostics.R
 70a40673d87bb843d945a1549869795c *inst/doc/diagnostics.Rmd
-f6b704a776d255c9613130f7f117a3ee *inst/doc/diagnostics.html
+d053f5a38a14a86c33d9ef87b8dd3a08 *inst/doc/diagnostics.html
 1e8337bfc7012e32b427c8f20939781a *inst/doc/flexmirt-plots.R
 c55656d38746ea1f7ace79f242e0c909 *inst/doc/flexmirt-plots.Rmd
-0d9bf6286ff7a949c114c2d63085ef93 *inst/doc/flexmirt-plots.html
+d2a9a147b97ab38a1b077e6fc8b7238a *inst/doc/flexmirt-plots.html
 796d890c744376336a66fbd3d64ac6c8 *inst/include/libifa-rpf.h
 1a507d642d9fee79664b2c236882ef63 *inst/tests/test-dTheta.R
 584dab90f5f369e13e1ae54f084658b2 *inst/tests/test-dataframe.R
@@ -45,7 +45,7 @@ ef7b7e6ca0b359c8c6c650dcaa24feeb *inst/tests/test-fit.R
 19777754436602e8f83bfb5dc2f6a550 *inst/tests/test-mirt-icc.R
 b095683cbe2cb02ffb932e55b73ff623 *inst/tests/test-multinomial.R
 bb7129eccee738d2973822ed1dd6ecb6 *inst/tests/test-null.R
-7a2cec0b3c1864d8ba857ad8d07d759d *inst/tests/test-raschfit.R
+4bdea18bbe1740e99a29a961dc2ddd15 *inst/tests/test-raschfit.R
 dce103e15cc2a897fcb730a4d5ca2c0d *inst/tests/test-rescale.R
 4bcdab86162f522a3d0c20661fa0f99b *inst/tests/test-sample.R
 bacec6201cb18a8becb1a6c9700af474 *inst/tests/test-score.R
