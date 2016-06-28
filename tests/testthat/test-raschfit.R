@@ -14,7 +14,7 @@ test_that("kct", {
   params <- cbind(1, kct.items$MEASURE, logit(0), logit(1))
   rownames(params) <- kct.items$NAME
   items<-list()
-  items[1:18] <- rpf.drm()
+  items[1:18] <- list(rpf.drm())
   params[,2] <- -params[,2]
 
   expect_warning(fit <- rpf.1dim.fit(items, t(params), responses, scores, 2, wh.exact=TRUE),
@@ -47,7 +47,7 @@ plot.icc <- function(ii, ii.p, width=7) {
 test_that("sf", {
   data(science)
   spec <- list()
-  spec[1:25] <- rpf.nrm(outcomes=3, T.c = lower.tri(diag(2),TRUE) * -1)
+  spec[1:25] <- list(rpf.nrm(outcomes=3, T.c = lower.tri(diag(2),TRUE) * -1))
   
   param <- rbind(a=1, alf1=1, alf2=0,
         gam1=sfif$MEASURE + sfsf[sfsf$CATEGORY==1,"Rasch.Andrich.threshold.MEASURE"],
@@ -73,30 +73,4 @@ test_that("sf", {
   expect_equal(fit$infit.z, sfpf$IN.ZSTD[-2], tolerance=.05)
   expect_equal(fit$outfit, sfpf$OUT.MSQ[-2], tolerance=.05)
   expect_equal(fit$outfit.z, sfpf$OUT.ZSTD[-2], tolerance=.075)
-})
-
-test_that("mirt", {
-  require(mirt)
-  set.seed(1)
-  a <- matrix(rlnorm(20, meanlog=0, sdlog = .1),ncol=1)
-  d <- matrix(rnorm(20),ncol=1)
-  data <- simdata(a,d, 1000, rep('dich', 20))
-  data <- data[-c(446, 455, 538, 616, 630, 687, 882, 894, 923),]  # exclude min or max responses
-  raschfit <- mirt(data, 1, itemtype='Rasch', D=1, verbose=FALSE)
-  # coef(raschfit)  # item parameters
-  mirt.fit <- itemfit(raschfit, infit=TRUE)
-  scores.full <- fscores(raschfit, full.scores=TRUE)
-
-  spec <- list()
-  spec[1:20] <- rpf.drm()
-  params <- simplify2array(coef(raschfit)[1:20])[1,,]
-  params[c('g', 'u'),] <- logit(params[c('g','u'),])
-  scores <- scores.full[,'F1']
-  data.f <- as.data.frame(lapply(as.data.frame(data), ordered))
-  fit <- rpf.1dim.fit(spec, params, data.f, scores, 2, wh.exact=TRUE)
-
-  expect_equal(mirt.fit$infit, fit$infit, tolerance=10^-4)
-  expect_equal(mirt.fit$z.infit, fit$infit.z, tolerance=10^-3)
-  expect_equal(mirt.fit$outfit, fit$outfit, tolerance=10^-4)
-  expect_equal(mirt.fit$z.outfit, fit$outfit.z, tolerance=10^-3)
 })
