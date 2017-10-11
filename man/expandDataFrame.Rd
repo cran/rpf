@@ -25,4 +25,3 @@ expandDataFrame(LSAT7, freqName="freq")
 \author{
 Based on code by Phil Chalmers \email{rphilip.chalmers@gmail.com}
 }
-

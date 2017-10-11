@@ -62,4 +62,3 @@ United States of America,} 17, 684-688.
 Wright, B. D. & Masters, G. N. (1982). \emph{Rating Scale
 Analysis.} Chicago: Mesa Press.
 }
-

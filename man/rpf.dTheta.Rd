@@ -2,9 +2,9 @@
 % Please edit documentation in R/classes.R
 \name{rpf.dTheta}
 \alias{rpf.dTheta}
-\alias{rpf.dTheta,rpf.base,numeric,matrix,numeric-method}
-\alias{rpf.dTheta,rpf.base,numeric,numeric,numeric-method}
 \alias{rpf_dTheta_wrapper}
+\alias{rpf.dTheta,rpf.base,numeric,numeric,numeric-method}
+\alias{rpf.dTheta,rpf.base,numeric,matrix,numeric-method}
 \title{Item derivatives with respect to the location in the latent space}
 \usage{
 rpf.dTheta(m, param, where, dir)
@@ -22,4 +22,3 @@ rpf.dTheta(m, param, where, dir)
 Evaluate the partial derivatives of the response probability with
 respect to ability. See \link{rpf.info} for an application.
 }
-

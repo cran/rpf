@@ -8,4 +8,3 @@
 \description{
 The base class for 1 dimensional response probability functions.
 }
-

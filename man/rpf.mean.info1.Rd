@@ -16,4 +16,3 @@ rpf.mean.info1(spec, iparam, grain = 0.1)
 \description{
 WARNING: This function is experimental and may disappear.
 }
-

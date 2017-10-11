@@ -24,7 +24,6 @@
 ##'
 ##' @param fname file name
 ##' @return a list of groups each with item parameters and the latent distribution
-##' @export
 read.flexmirt <- function(fname) {
   groups <- list()
 
@@ -105,8 +104,8 @@ read.flexmirt <- function(fname) {
             offset <- offset+1
           }
           # slope
-          a <- thisGroup[i,offset]
-          offset <- offset+1
+	  a <- thisGroup[i,offset:(offset+dims-1)]
+	  offset <- offset+dims
 
           # intercept
           Lmat <- thisGroup[i,offset]

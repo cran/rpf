@@ -8,4 +8,3 @@
 \description{
 Unidimensional logistic function of a monotonic polynomial.
 }
-

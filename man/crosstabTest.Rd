@@ -16,4 +16,3 @@ crosstabTest(ob, ex, trials)
 \description{
 This is for developers.
 }
-

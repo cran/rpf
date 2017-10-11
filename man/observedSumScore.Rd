@@ -27,4 +27,3 @@ colnames(param) <- colnames(data)
 grp <- list(spec=spec, param=param, data=data)
 observedSumScore(grp)
 }
-

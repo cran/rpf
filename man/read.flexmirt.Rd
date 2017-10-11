@@ -15,4 +15,3 @@ a list of groups each with item parameters and the latent distribution
 \description{
 Load the item parameters from a flexMIRT PRM file.
 }
-

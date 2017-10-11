@@ -20,4 +20,3 @@ ordinal.gamma(jobsat)
 \references{
 Agresti, A. (1990). Categorical data analysis. New York: Wiley.
 }
-

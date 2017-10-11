@@ -41,4 +41,3 @@ of flexibility.
 spec <- rpf.grm()
 rpf.prob(spec, rpf.rparam(spec), 0)
 }
-

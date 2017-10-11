@@ -26,4 +26,3 @@ model.
 \author{
 Jonathan Weeks <weeksjp@gmail.com>
 }
-

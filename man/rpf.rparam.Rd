@@ -4,12 +4,12 @@
 \name{rpf.rparam}
 \alias{rpf.rparam}
 \alias{rpf.rparam,rpf.1dim.drm-method}
-\alias{rpf.rparam,rpf.1dim.graded-method}
-\alias{rpf.rparam,rpf.1dim.lmp-method}
 \alias{rpf.rparam,rpf.mdim.drm-method}
+\alias{rpf.rparam,rpf.1dim.graded-method}
 \alias{rpf.rparam,rpf.mdim.graded-method}
-\alias{rpf.rparam,rpf.mdim.mcm-method}
 \alias{rpf.rparam,rpf.mdim.nrm-method}
+\alias{rpf.rparam,rpf.mdim.mcm-method}
+\alias{rpf.rparam,rpf.1dim.lmp-method}
 \title{Generates item parameters}
 \usage{
 rpf.rparam(m, version = 2L)
@@ -31,4 +31,3 @@ reproducable random parameters (using \code{set.seed}).
 i1 <- rpf.drm()
 rpf.rparam(i1)
 }
-

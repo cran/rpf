@@ -19,4 +19,3 @@ a factor threshold matrix with items in the columns and factor thresholds in the
 \description{
 Convert response function intercepts to factor thresholds
 }
-

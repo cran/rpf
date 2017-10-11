@@ -24,4 +24,3 @@ transformation is applied to the slope matrix,
 \seealso{
 \link{rpf.ogive}
 }
-

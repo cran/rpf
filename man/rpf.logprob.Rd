@@ -3,11 +3,11 @@
 \docType{methods}
 \name{rpf.logprob}
 \alias{rpf.logprob}
-\alias{rpf.logprob,rpf.1dim,numeric,matrix-method}
 \alias{rpf.logprob,rpf.1dim,numeric,numeric-method}
-\alias{rpf.logprob,rpf.mdim,numeric,NULL-method}
+\alias{rpf.logprob,rpf.1dim,numeric,matrix-method}
 \alias{rpf.logprob,rpf.mdim,numeric,matrix-method}
 \alias{rpf.logprob,rpf.mdim,numeric,numeric-method}
+\alias{rpf.logprob,rpf.mdim,numeric,NULL-method}
 \alias{rpf_logprob_wrapper}
 \title{Map an item model, item parameters, and person trait score into a
 probability vector}
@@ -39,4 +39,3 @@ i1.p <- rpf.rparam(i1)
 rpf.logprob(i1, c(i1.p), -1)   # low trait score
 rpf.logprob(i1, c(i1.p), c(0,1))    # average and high trait score
 }
-

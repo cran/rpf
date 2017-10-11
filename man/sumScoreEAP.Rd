@@ -45,4 +45,3 @@ published yet (as of Jun 2014).
  grp <- list(spec=spec, mean=0, cov=matrix(1,1,1), param=param)
  sumScoreEAP(grp)
 }
-

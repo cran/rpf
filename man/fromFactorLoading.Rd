@@ -17,4 +17,3 @@ a slope matrix with items in the columns and factors in the rows
 \description{
 Convert factor loadings to response function slopes
 }
-

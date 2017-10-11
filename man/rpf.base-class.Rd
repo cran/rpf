@@ -2,12 +2,11 @@
 % Please edit documentation in R/classes.R
 \docType{class}
 \name{Class rpf.base}
-\alias{$,rpf.base-method}
-\alias{$<-,rpf.base-method}
 \alias{Class rpf.base}
 \alias{rpf.base-class}
+\alias{$,rpf.base-method}
+\alias{$<-,rpf.base-method}
 \title{The base class for response probability functions.}
 \description{
 Item specifications should not be modified after creation.
 }
-

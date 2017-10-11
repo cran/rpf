@@ -3,19 +3,19 @@
 \docType{methods}
 \name{rpf.prob}
 \alias{rpf.prob}
-\alias{rpf.prob,rpf.1dim,numeric,matrix-method}
 \alias{rpf.prob,rpf.1dim,numeric,numeric-method}
-\alias{rpf.prob,rpf.1dim.grm,numeric,numeric-method}
-\alias{rpf.prob,rpf.base,data.frame,numeric-method}
-\alias{rpf.prob,rpf.base,matrix,matrix-method}
-\alias{rpf.prob,rpf.base,matrix,numeric-method}
 \alias{rpf.prob,rpf.mdim,numeric,NULL-method}
-\alias{rpf.prob,rpf.mdim,numeric,matrix-method}
 \alias{rpf.prob,rpf.mdim,numeric,numeric-method}
-\alias{rpf.prob,rpf.mdim.grm,numeric,matrix-method}
+\alias{rpf.prob,rpf.mdim,numeric,matrix-method}
+\alias{rpf.prob,rpf.base,data.frame,numeric-method}
+\alias{rpf.prob,rpf.base,matrix,numeric-method}
+\alias{rpf.prob,rpf.base,matrix,matrix-method}
+\alias{rpf.prob,rpf.1dim,numeric,matrix-method}
+\alias{rpf.prob,rpf.1dim.grm,numeric,numeric-method}
 \alias{rpf.prob,rpf.mdim.grm,numeric,numeric-method}
-\alias{rpf.prob,rpf.mdim.mcm,numeric,matrix-method}
 \alias{rpf.prob,rpf.mdim.nrm,numeric,matrix-method}
+\alias{rpf.prob,rpf.mdim.mcm,numeric,matrix-method}
+\alias{rpf.prob,rpf.mdim.grm,numeric,matrix-method}
 \alias{rpf_prob_wrapper}
 \title{Map an item model, item parameters, and person trait score into a
 probability vector}
@@ -46,4 +46,3 @@ i1.p <- rpf.rparam(i1)
 rpf.prob(i1, c(i1.p), -1)   # low trait score
 rpf.prob(i1, c(i1.p), c(0,1))    # average and high trait score
 }
-

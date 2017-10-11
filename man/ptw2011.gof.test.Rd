@@ -37,4 +37,3 @@ the confidence levels for a root-mean-square test of
 goodness-of-fit. \emph{Applied Mathematics and Computations,
 217}(22), 9072-9084.
 }
-

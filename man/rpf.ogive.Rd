@@ -41,4 +41,3 @@ Savalei, V. (2006). Logistic approximation to the normal: The KL
 rationale. \emph{Psychometrika, 71}(4), 763--767.
 }
 \keyword{datasets}
-

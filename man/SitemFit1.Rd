@@ -64,4 +64,3 @@ Orlando, M. and Thissen, D. (2000). Likelihood-Based
 Item-Fit Indices for Dichotomous Item Response Theory Models.
 \emph{Applied Psychological Measurement, 24}(1), 50-64.
 }
-

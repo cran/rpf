@@ -51,4 +51,3 @@ Nominal Categories Item Response Model. In M. L. Nering &
 R. Ostini (Eds.), \emph{Handbook of Polytomous Item Response
 Theory Models} (pp. 43--75). Routledge.
 }
-

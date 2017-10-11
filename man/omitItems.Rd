@@ -14,4 +14,3 @@ omitItems(grp, excol)
 \description{
 Omit the given items
 }
-

@@ -18,4 +18,3 @@ If a reference column is given then only rows that are not missing
 on the reference column are considered. Otherwise all rows are
 considered.
 }
-

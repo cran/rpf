@@ -11,12 +11,11 @@ items obtained from the Law School Admissions Test, section 6.
 \examples{
 data(LSAT6)
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \references{
 Thissen, D. (1982). Marginal maximum likelihood estimation for the one-parameter logistic model.
 \emph{Psychometrika, 47}, 175-186.
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{data}
-

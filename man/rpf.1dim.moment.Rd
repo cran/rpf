@@ -22,4 +22,3 @@ moment matrix
 \description{
 Popular central moments include 2 (variance) and 4 (kurtosis).
 }
-

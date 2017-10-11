@@ -50,4 +50,3 @@ rpf.sample(5, list(i1,i2), list(i1.p, i2.p))
 \seealso{
 \code{\link{sample}}
 }
-

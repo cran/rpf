@@ -26,4 +26,3 @@ colnames(param) <- colnames(data)
 grp <- list(spec=spec, param=param, data=data)
 itemOutcomeBySumScore(grp, c(FALSE,TRUE,TRUE), 1L)
 }
-

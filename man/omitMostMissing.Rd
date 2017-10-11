@@ -15,4 +15,3 @@ omitMostMissing(grp, omit)
 Items with no missing data are never omitted, regardless of the
 number of items requested.
 }
-

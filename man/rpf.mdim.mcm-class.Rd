@@ -10,4 +10,3 @@ multidimensional models have the same parameterization).}
 The multiple-choice response item model (both unidimensional and
 multidimensional models have the same parameterization).
 }
-

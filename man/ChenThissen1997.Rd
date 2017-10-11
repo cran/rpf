@@ -67,4 +67,3 @@ Educational measurement, 24}(3), 185--201.
 \seealso{
 \href{https://github.com/jpritikin/ifaTools}{ifaTools}
 }
-

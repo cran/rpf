@@ -8,4 +8,3 @@
 \description{
 Multidimensional dichotomous item models (M1PL, M2PL, and M3PL).
 }
-

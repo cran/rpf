@@ -11,12 +11,11 @@ items obtained from the Law School Admissions Test, section 7.
 \examples{
 data(LSAT7)
 }
-\author{
-Phil Chalmers \email{rphilip.chalmers@gmail.com}
-}
 \references{
 Bock, R. D., & Lieberman, M. (1970). Fitting a response model for \emph{n}
 dichotomously scored items. \emph{Psychometrika, 35}(2), 179-197.
 }
+\author{
+Phil Chalmers \email{rphilip.chalmers@gmail.com}
+}
 \keyword{data}
-

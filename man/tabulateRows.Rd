@@ -21,4 +21,3 @@ tabulateRows(df)
 \seealso{
 \code{\link{orderCompletely}}
 }
-

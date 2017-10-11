@@ -26,4 +26,3 @@ latent variable distribution fit in Item Response Theory. Paper presented at
 the annual International Meeting of the Psychometric Society, Lincoln,
 NE. Retrieved from http://www.cse.ucla.edu/downloads/files/SD2-final-4.pdf
 }
-

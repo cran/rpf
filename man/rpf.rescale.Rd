@@ -2,8 +2,8 @@
 % Please edit documentation in R/classes.R
 \name{rpf.rescale}
 \alias{rpf.rescale}
-\alias{rpf.rescale,rpf.base,numeric,numeric,matrix-method}
 \alias{rpf_rescale_wrapper}
+\alias{rpf.rescale,rpf.base,numeric,numeric,matrix-method}
 \title{Rescale item parameters}
 \usage{
 rpf.rescale(m, param, mean, cov)
@@ -33,4 +33,3 @@ pr1 <- rpf.prob(spec, padj, (testPoint-move) \%*\% Icov)
 pr2 <- rpf.prob(spec, p1, testPoint)
 abs(pr1 - pr2) < 1e9
 }
-

@@ -30,4 +30,3 @@ logit(0)   # -Inf
 \seealso{
 qlogis, plogis
 }
-

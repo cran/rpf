@@ -21,4 +21,3 @@ mask <- matrix(c(sample.int(3, 30, replace=TRUE)), 10, 3) == 1
 df[mask] <- NA
 df[orderCompletely(df),]
 }
-

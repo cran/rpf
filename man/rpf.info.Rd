@@ -34,4 +34,3 @@ Dodd, B. G., De Ayala, R. J. & Koch,
 W. R. (1995). Computerized adaptive testing with polytomous items.
 \emph{Applied psychological measurement 19}(1), 5-22.
 }
-

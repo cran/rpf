@@ -15,4 +15,3 @@ the integer ID assigned to the given model
 \description{
 This is an internal function and should not be used.
 }
-

@@ -23,4 +23,3 @@ Wright, B. D. & Masters, G. N. (1982). \emph{Rating Scale
 Analysis.} Chicago: Mesa Press.
 }
 \keyword{data}
-

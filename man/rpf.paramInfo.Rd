@@ -22,4 +22,3 @@ Retrieve a description of the given parameter
 \examples{
 rpf.paramInfo(rpf.drm())
 }
-

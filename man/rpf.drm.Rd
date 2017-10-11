@@ -43,4 +43,3 @@ Cai, L., Yang, J. S., & Hansen, M. (2011). Generalized
 Full-Information Item Bifactor Analysis.  \emph{Psychological
 Methods, 16}(3), 221-248.
 }
-

@@ -18,4 +18,3 @@ Length of the item parameter vector
 rpf.numParam(rpf.grm(outcomes=3))
 rpf.numParam(rpf.nrm(outcomes=3))
 }
-

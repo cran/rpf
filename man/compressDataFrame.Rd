@@ -21,4 +21,3 @@ Compress a data frame into unique rows and frequency counts.
 df <- as.data.frame(matrix(c(sample.int(2, 30, replace=TRUE)), 10, 3))
 compressDataFrame(df)
 }
-

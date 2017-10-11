@@ -22,4 +22,3 @@ residuals
 \description{
 Calculate residuals
 }
-

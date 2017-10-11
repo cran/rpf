@@ -29,4 +29,3 @@ tests. See discussion of \dQuote{minItemsPerScore} in \link{EAPscores}.
 \seealso{
 \href{https://github.com/jpritikin/ifaTools}{ifaTools}
 }
-

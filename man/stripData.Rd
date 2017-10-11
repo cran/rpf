@@ -12,4 +12,3 @@ stripData(grp)
 \description{
 In addition, the weightColumn is reset to NULL.
 }
-

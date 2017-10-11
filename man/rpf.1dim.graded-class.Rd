@@ -9,4 +9,3 @@
 This class contains methods common to both the generalized partial
 credit model and the graded response model.
 }
-

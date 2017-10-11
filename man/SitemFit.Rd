@@ -47,4 +47,3 @@ grp$free <- grp$param != 0
 grp$data <- rpf.sample(500, grp=grp)
 SitemFit(grp)
 }
-

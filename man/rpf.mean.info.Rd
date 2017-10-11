@@ -22,4 +22,3 @@ function integrates across the latent space.
 \details{
 WARNING: This function is experimental and may disappear.
 }
-

@@ -8,4 +8,3 @@
 \description{
 The unidimensional graded response item model.
 }
-

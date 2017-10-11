@@ -2,8 +2,8 @@
 % Please edit documentation in R/classes.R
 \name{rpf.dLL}
 \alias{rpf.dLL}
-\alias{rpf.dLL,rpf.base,numeric,NULL,numeric-method}
 \alias{rpf.dLL,rpf.base,numeric,numeric,numeric-method}
+\alias{rpf.dLL,rpf.base,numeric,NULL,numeric-method}
 \alias{rpf_dLL_wrapper}
 \title{Item parameter derivatives}
 \usage{
@@ -39,4 +39,3 @@ occasional debugging.
 \seealso{
 The numDeriv package.
 }
-

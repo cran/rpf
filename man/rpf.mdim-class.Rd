@@ -8,4 +8,3 @@
 \description{
 The base class for multi-dimensional response probability functions.
 }
-

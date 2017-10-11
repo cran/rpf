@@ -6,7 +6,7 @@
 \alias{An introduction-package}
 \title{rpf - Response Probability Functions}
 \description{
-The purpose of this package is to factor out logic and math common
+Factor out logic and math common
 to Item Factor Analysis fitting, diagnostics, and analysis.  It is
 envisioned as core support code suitable for more specialized IFA
 packages to build upon.
@@ -44,10 +44,13 @@ This package could also accrete functions to support plotting (but
 not the actual plot functions).
 }
 \references{
+Pritikin, J. N., Hunter, M. D., & Boker, S. M.
+(2015). Modular open-source software for Item Factor Analysis.
+Educational and Psychological Measurement, 75(3), 458-474
+
 Thissen, D. and Steinberg, L. (1986). A taxonomy of
 item response models. \emph{Psychometrika 51}(4), 567-577.
 }
 \seealso{
 See \code{\link{rpf.rparam}} to create item parameters.
 }
-

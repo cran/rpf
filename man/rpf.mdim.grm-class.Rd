@@ -8,4 +8,3 @@
 \description{
 The multidimensional graded response item model.
 }
-

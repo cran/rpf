@@ -102,4 +102,3 @@ Liang (2007). \emph{A semi-parametric approach to estimating item response
 functions}. Unpublished doctoral dissertation, Department of Psychology,
 The Ohio State University.
 }
-

@@ -22,4 +22,3 @@ standardized residuals
 \description{
 Calculate standardized residuals
 }
-

@@ -21,4 +21,3 @@ parameter of this function should take.
 \details{
 NOTE: Support for the graded response model may not be complete.
 }
-
