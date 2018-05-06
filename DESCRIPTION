@@ -1,7 +1,7 @@
 Package: rpf
 Type: Package
 Title: Response Probability Functions
-Version: 0.56.1
+Version: 0.56.2
 Date: 2017-12-07
 Authors@R: c(person("Joshua",family="Pritikin", email="jpritikin@pobox.com",
     role=c('cre','aut')), person("Jonathan",family="Weeks",
@@ -35,7 +35,7 @@ URL: https://github.com/jpritikin/rpf
 SystemRequirements: GNU make
 RoxygenNote: 6.0.1.9000
 NeedsCompilation: yes
-Packaged: 2018-04-03 10:38:34 UTC; ripley
+Packaged: 2018-05-06 08:03:08 UTC; ripley
 Author: Joshua Pritikin [cre, aut],
   Jonathan Weeks [ctb],
   Li Cai [ctb],
@@ -44,8 +44,9 @@ Author: Joshua Pritikin [cre, aut],
   Michael D. Hunter [ctb],
   Carl F. Falk [ctb]
 Repository: CRAN
-Date/Publication: 2018-04-03 10:42:03 UTC
+Date/Publication: 2018-05-06 08:12:24 UTC
 X-CRAN-Original-Maintainer: Joshua Pritikin <jpritikin@pobox.com>
 X-CRAN-Comment: Orphaned and corrected on 2018-04-03 as invalid
         Makevars was not corrected nor GNU make declared, despite
-        requests.
+        requests. Further corrected on 2018-05-06 for warnings from gcc
+        8.
