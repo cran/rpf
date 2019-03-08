@@ -4,12 +4,14 @@
 \alias{compressDataFrame}
 \title{Compress a data frame into unique rows and frequencies}
 \usage{
-compressDataFrame(tabdata, freqColName = "freq")
+compressDataFrame(tabdata, freqColName = "freq", .asNumeric = FALSE)
 }
 \arguments{
 \item{tabdata}{An object of class \code{data.frame}}
 
 \item{freqColName}{Column name to contain the frequencies}
+
+\item{.asNumeric}{logical. Whether to cast the frequencies to the numeric type}
 }
 \value{
 Returns a compressed data frame

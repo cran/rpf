@@ -5,7 +5,8 @@
 \title{Compute the S fit statistic for 1 item}
 \usage{
 SitemFit1(grp, item, free = 0, ..., method = "pearson", log = TRUE,
-  qwidth = 6, qpoints = 49L, alt = FALSE, omit = 0L, .twotier = TRUE)
+  qwidth = 6, qpoints = 49L, alt = FALSE, omit = 0L,
+  .twotier = TRUE)
 }
 \arguments{
 \item{grp}{a list with spec, param, mean, cov, and data}

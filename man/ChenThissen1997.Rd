@@ -6,7 +6,8 @@
 \title{Computes local dependence indices for all pairs of items}
 \usage{
 ChenThissen1997(grp, ..., data = NULL, inames = NULL, qwidth = 6,
-  qpoints = 49, method = "pearson", .twotier = TRUE, .parallel = TRUE)
+  qpoints = 49, method = "pearson", .twotier = TRUE,
+  .parallel = TRUE)
 }
 \arguments{
 \item{grp}{a list with the spec, param, mean, and cov describing the group}
