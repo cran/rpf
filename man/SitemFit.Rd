@@ -38,7 +38,7 @@ the results.
 }
 \examples{
 grp <- list(spec=list())
-grp$spec[1:20] <- rpf.grm()
+grp$spec[1:20] <- list(rpf.grm())
 grp$param <- sapply(grp$spec, rpf.rparam)
 colnames(grp$param) <- paste("i", 1:20, sep="")
 grp$mean <- 0

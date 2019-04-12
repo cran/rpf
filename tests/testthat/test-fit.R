@@ -50,8 +50,9 @@ test_that("orlando-thissen-2000", {
   expect_true(all(sapply(got, function(ii) is.null(ii$omitted))))
   stat <- sapply(got, function(x) x$statistic)
   names(stat) <- NULL
-  Estat <- c(10.8, 13.38, 19.47, 15.34, 13.62, 6.52, 19.91, 8.19,  8.03, 11.73, 12.84,
-             10.4, 5.08, 9.37, 10.37, 11.74, 20.67, 16.34,  13.5, 16.91)
+  Estat <- c(10.96, 14.32, 19.53, 15.53, 15.16, 7.75, 31.24, 8.63, 8.36,
+             12.55, 13.94, 11.01, 5.32, 9.49, 10.62, 12.88, 22.21, 15.17, 
+             14.15, 16.01)
   expect_equal(stat, Estat, tolerance=.01)
   
   E1orig <- structure(c(2, 3.99, 12.95, 21.82, 21.66, 25.29, 30.5, 32.29,  35.09, 24.41, 34.33, 15.74,
@@ -69,7 +70,7 @@ test_that("orlando-thissen-2000", {
   mask <- !is.na(got[[1]]$expected)
   expect_equal(got[[1]]$expected[mask], E1[mask], tolerance=.01)
   
-  expect_equal(got[[1]]$pval, -0.984, tolerance=.01)
+  expect_equal(got[[1]]$pval, -0.8065, tolerance=.01)
 
   got <- SitemFit(grp, method="pearson", alt=TRUE)
   stat <- sapply(got, function(x) x$statistic)
@@ -95,7 +96,7 @@ test_that("fit w/ mcar", {
   expect_equal(got$n, 101L)
   expect_equal(got$rms.p, -1.87, tolerance=.01)
   expect_equal(got$pearson.df, 16L)
-  expect_equal(got$pearson.p, -1.46, tolerance=.01)
+  expect_equal(got$pearson.p, -1.09, tolerance=.01)
 
   grp1 <- grp
   grp1$data <- grp$data[1:250,]
@@ -109,8 +110,8 @@ test_that("fit w/ mcar", {
   got <- SitemFit(grp, omit=2L)
   stat <- sapply(got, function(x) x$statistic)
   names(stat) <- NULL
-  Estat <- c(6.68, 6.87, 9.6, 14.31, 11.74, 11.63, 15.05, 2.08, 6.16, 6.8,
-             10.28, 2.37, 6.86, 6.47, 10.02, 11.48, 13.96, 9.96, 8.24, 11.77 )
+  Estat <- c(9.99, 8.1, 10.64, 14.65, 6.69, 10.88, 16.19, 2.95, 7.3, 11.12, 
+             12.61, 3.73, 7.53, 8.71, 12.2, 11.66, 14.19, 12.15, 10.44, 12.21 )
   expect_equal(stat, Estat, tolerance=.01)
   
   e1 <- SitemFit(grp1) + SitemFit(grp2)
