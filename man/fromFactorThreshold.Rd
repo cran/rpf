@@ -11,7 +11,7 @@ fromFactorThreshold(threshold, loading, ogive = rpf.ogive)
 
 \item{loading}{a matrix with items in the rows and factors in the columns}
 
-\item{ogive}{the ogive constant (default rpf.ogive)}
+\item{ogive}{the ogive constant (default \link{rpf.ogive})}
 }
 \value{
 an item intercept matrix with items in the columns and intercepts in the rows
@@ -19,3 +19,10 @@ an item intercept matrix with items in the columns and intercepts in the rows
 \description{
 Convert factor thresholds to response function intercepts
 }
+\seealso{
+Other factor model equivalence: 
+\code{\link{fromFactorLoading}()},
+\code{\link{toFactorLoading}()},
+\code{\link{toFactorThreshold}()}
+}
+\concept{factor model equivalence}

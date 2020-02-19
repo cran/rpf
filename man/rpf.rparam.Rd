@@ -10,6 +10,8 @@
 \alias{rpf.rparam,rpf.mdim.nrm-method}
 \alias{rpf.rparam,rpf.mdim.mcm-method}
 \alias{rpf.rparam,rpf.1dim.lmp-method}
+\alias{rpf.rparam,rpf.1dim.grmp-method}
+\alias{rpf.rparam,rpf.1dim.gpcmp-method}
 \title{Generates item parameters}
 \usage{
 rpf.rparam(m, version = 2L)

@@ -17,12 +17,22 @@ rpf.mcm(outcomes = 2, numChoices = 5, factors = 1)
 an item model
 }
 \description{
-WARNING: This model is mostly not implemented.
+\lifecycle{experimental}
 }
 \details{
 This function instantiates a multiple-choice response
 model.
 }
+\seealso{
+Other response model: 
+\code{\link{rpf.drm}()},
+\code{\link{rpf.gpcmp}()},
+\code{\link{rpf.grmp}()},
+\code{\link{rpf.grm}()},
+\code{\link{rpf.lmp}()},
+\code{\link{rpf.nrm}()}
+}
 \author{
 Jonathan Weeks <weeksjp@gmail.com>
 }
+\concept{response model}

@@ -108,7 +108,7 @@ setMethod("rpf.numSpec", signature(m="rpf.base"),
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_numSpec_wrapper, m@spec)
+              .Call(`_rpf_numSpec`, m@spec)
             }
           })
 
@@ -125,7 +125,7 @@ setGeneric("rpf.numParam", function(m) standardGeneric("rpf.numParam"))
 
 setMethod("rpf.numParam", signature(m="rpf.base"),
           function(m) {
-            .Call(rpf_numParam_wrapper, m@spec)
+            .Call('_rpf_numParam', m@spec)
           })
 
 ##' Create a similar item specification with the given number of factors
@@ -162,9 +162,9 @@ setMethod("rpf.paramInfo", signature(m="rpf.base"),
             if (length(num) == 0) {
               stop("Which parameter?")
             } else if (length(num) == 1) {
-              .Call(rpf_paramInfo_wrapper, m@spec, num-1)
+              .Call('_rpf_paramInfo', m@spec, num-1)
             } else {
-              sapply(num, function (px) .Call(rpf_paramInfo_wrapper, m@spec, px-1))
+              sapply(num, function (px) .Call('_rpf_paramInfo', m@spec, px-1))
             }
           })
 
@@ -193,7 +193,7 @@ setMethod("rpf.paramInfo", signature(m="rpf.base"),
 ##' @aliases
 ##' rpf.dLL,rpf.base,numeric,numeric,numeric-method
 ##' rpf.dLL,rpf.base,numeric,NULL,numeric-method
-##' rpf_dLL_wrapper
+##' _rpf_dLL
 setGeneric("rpf.dLL", function(m, param, where, weight) standardGeneric("rpf.dLL"))
 
 setMethod("rpf.dLL", signature(m="rpf.base", param="numeric",
@@ -202,7 +202,7 @@ setMethod("rpf.dLL", signature(m="rpf.base", param="numeric",
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_dLL_wrapper, m@spec, param, where, weight)
+              .Call('_rpf_dLL', m@spec, param, where, weight)
             }
           })
 
@@ -212,7 +212,7 @@ setMethod("rpf.dLL", signature(m="rpf.base", param="numeric",
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_dLL_wrapper, m@spec, param, where, weight)
+              .Call('_rpf_dLL', m@spec, param, where, weight)
             }
           })
 
@@ -224,9 +224,9 @@ setMethod("rpf.dLL", signature(m="rpf.base", param="numeric",
 ##' @param m item model
 ##' @param param item parameters
 ##' @param where location in the latent distribution
-##' @param dir if more than 1 factor, a basis vector]
+##' @param dir if more than 1 factor, a basis vector
 ##' @aliases
-##' rpf_dTheta_wrapper
+##' _rpf_dTheta
 ##' rpf.dTheta,rpf.base,numeric,numeric,numeric-method
 ##' rpf.dTheta,rpf.base,numeric,matrix,numeric-method
 setGeneric("rpf.dTheta", function(m, param, where, dir) standardGeneric("rpf.dTheta"))
@@ -237,7 +237,7 @@ setMethod("rpf.dTheta", signature(m="rpf.base", param="numeric",
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_dTheta_wrapper, m@spec, param, where, dir)
+              .Call('_rpf_dTheta', m@spec, param, where, dir)
             }
           })
 
@@ -259,7 +259,7 @@ setMethod("rpf.dTheta", signature(m="rpf.base", param="numeric",
 ##' @param mean vector of means
 ##' @param cov covariance matrix
 ##' @aliases
-##' rpf_rescale_wrapper
+##' _rpf_rescale
 ##' rpf.rescale,rpf.base,numeric,numeric,matrix-method
 ##' @examples
 ##' spec <- rpf.grm()
@@ -280,12 +280,19 @@ setMethod("rpf.rescale", signature(m="rpf.base", param="numeric",
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_rescale_wrapper, m@spec, param, mean, cov)
+              .Call('_rpf_rescale', m@spec, param, mean, cov)
             }
           })
 
 ##' Map an item model, item parameters, and person trait score into a
 ##' probability vector
+##'
+##' This function is known by many names in the literature. When
+##' plotted against latent trait, it is often called a traceline, item
+##' characteristic curve, or item response function. Sometimes the word
+##' 'category' or 'outcome' is used in place of 'item'. For example,
+##' 'item response function' might become 'category response
+##' function'. All these terms refer to the same thing.
 ##'
 ##' @param m an item model
 ##' @param param item parameters
@@ -310,7 +317,7 @@ setMethod("rpf.rescale", signature(m="rpf.base", param="numeric",
 ##' rpf.prob,rpf.mdim.nrm,numeric,matrix-method
 ##' rpf.prob,rpf.mdim.mcm,numeric,matrix-method
 ##' rpf.prob,rpf.mdim.grm,numeric,matrix-method
-##' rpf_prob_wrapper
+##' _rpf_prob
 ##' @examples
 ##' i1 <- rpf.drm()
 ##' i1.p <- rpf.rparam(i1)
@@ -340,7 +347,7 @@ setGeneric("rpf.prob", function(m, param, theta) standardGeneric("rpf.prob"))
 ##' rpf.logprob,rpf.mdim,numeric,matrix-method
 ##' rpf.logprob,rpf.mdim,numeric,numeric-method
 ##' rpf.logprob,rpf.mdim,numeric,NULL-method
-##' rpf_logprob_wrapper
+##' _rpf_logprob
 ##' @examples
 ##' i1 <- rpf.drm()
 ##' i1.p <- rpf.rparam(i1)
@@ -353,7 +360,7 @@ setMethod("rpf.logprob", signature(m="rpf.1dim", param="numeric", theta="numeric
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_logprob_wrapper, m@spec, param, theta)
+              .Call('_rpf_logprob', m@spec, param, theta)
             }
           })
 
@@ -362,7 +369,7 @@ setMethod("rpf.logprob", signature(m="rpf.mdim", param="numeric", theta="matrix"
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_logprob_wrapper, m@spec, param, theta)
+              .Call('_rpf_logprob', m@spec, param, theta)
             }
           })
 
@@ -376,7 +383,7 @@ setMethod("rpf.logprob", signature(m="rpf.mdim", param="numeric", theta="NULL"),
             if (length(m@spec)==0) {
               stop("Not implemented")
             } else {
-              .Call(rpf_logprob_wrapper, m@spec, param, theta)
+              .Call('_rpf_logprob', m@spec, param, theta)
             }
           })
 
@@ -390,7 +397,7 @@ setMethod("rpf.prob", signature(m="rpf.1dim", param="numeric", theta="numeric"),
             if (length(m@spec)==0) {
               exp(rpf.logprob(m, param, theta))
             } else {
-              .Call(rpf_prob_wrapper, m@spec, param, theta)
+              .Call('_rpf_prob', m@spec, param, theta)
             }
           })
 
@@ -399,7 +406,7 @@ setMethod("rpf.prob", signature(m="rpf.mdim", param="numeric", theta="NULL"),
             if (length(m@spec)==0) {
               exp(rpf.logprob(m, param, theta))
             } else {
-              .Call(rpf_prob_wrapper, m@spec, param, theta)
+              .Call('_rpf_prob', m@spec, param, theta)
             }
           })
 
@@ -408,7 +415,7 @@ setMethod("rpf.prob", signature(m="rpf.mdim", param="numeric", theta="matrix"),
             if (length(m@spec)==0) {
               exp(rpf.logprob(m, param, theta))
             } else {
-              .Call(rpf_prob_wrapper, m@spec, param, theta)
+              .Call('_rpf_prob', m@spec, param, theta)
             }
           })
 
@@ -481,6 +488,8 @@ rpf.info <- function(ii, ii.p, where, basis=1) {
 ##' rpf.rparam,rpf.mdim.nrm-method
 ##' rpf.rparam,rpf.mdim.mcm-method
 ##' rpf.rparam,rpf.1dim.lmp-method
+##' rpf.rparam,rpf.1dim.grmp-method
+##' rpf.rparam,rpf.1dim.gpcmp-method
 ##' @examples
 ##' i1 <- rpf.drm()
 ##' rpf.rparam(i1)
@@ -593,6 +602,22 @@ setClass("rpf.mdim.mcm", contains='rpf.mdim')
 ##'
 setClass("rpf.1dim.lmp", contains='rpf.1dim')
 
+##' Unidimensional graded response monotonic polynomial.
+##'
+##' @name Class rpf.1dim.grmp
+##' @rdname rpf.1dim.grmp-class
+##' @aliases rpf.1dim.grmp-class
+##'
+setClass("rpf.1dim.grmp", contains='rpf.1dim')
+
+##' Unidimensional generalized partial credit monotonic polynomial.
+##'
+##' @name Class rpf.1dim.gpcmp
+##' @rdname rpf.1dim.gpcmp-class
+##' @aliases rpf.1dim.gpcmp-class
+##'
+setClass("rpf.1dim.gpcmp", contains='rpf.1dim')
+
 ##' Convert an rpf item model name to an ID
 ##'
 ##' This is an internal function and should not be used.
@@ -600,5 +625,5 @@ setClass("rpf.1dim.lmp", contains='rpf.1dim')
 ##' @param name name of the item model (string)
 ##' @return the integer ID assigned to the given model
 rpf.id_of <- function(name) {
-   .Call(get_model_names, name)
+   .Call(`_rpf_get_model_id`, name)
 }

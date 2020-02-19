@@ -8,7 +8,7 @@
 \alias{rpf.logprob,rpf.mdim,numeric,matrix-method}
 \alias{rpf.logprob,rpf.mdim,numeric,numeric-method}
 \alias{rpf.logprob,rpf.mdim,numeric,NULL-method}
-\alias{rpf_logprob_wrapper}
+\alias{_rpf_logprob}
 \title{Map an item model, item parameters, and person trait score into a
 probability vector}
 \usage{

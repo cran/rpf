@@ -14,11 +14,9 @@ rpf.mean.info(spec, param, grain = 0.1)
 \item{grain}{the step size for numerical integration (optional)}
 }
 \description{
+\lifecycle{experimental}
 This is a point estimate of the mean difficulty of items that do
 not offer easily interpretable parameters such as the Generalized
 PCM. Since the information curve may not be unimodal, this
 function integrates across the latent space.
-}
-\details{
-WARNING: This function is experimental and may disappear.
 }

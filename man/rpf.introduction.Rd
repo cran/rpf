@@ -3,7 +3,6 @@
 \docType{package}
 \name{An introduction}
 \alias{An introduction}
-\alias{An introduction-package}
 \title{rpf - Response Probability Functions}
 \description{
 Factor out logic and math common

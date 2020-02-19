@@ -16,7 +16,7 @@
 \alias{rpf.prob,rpf.mdim.nrm,numeric,matrix-method}
 \alias{rpf.prob,rpf.mdim.mcm,numeric,matrix-method}
 \alias{rpf.prob,rpf.mdim.grm,numeric,matrix-method}
-\alias{rpf_prob_wrapper}
+\alias{_rpf_prob}
 \title{Map an item model, item parameters, and person trait score into a
 probability vector}
 \usage{
@@ -37,8 +37,12 @@ returned in the dichotomous case for API consistency with
 polytomous item models.
 }
 \description{
-Map an item model, item parameters, and person trait score into a
-probability vector
+This function is known by many names in the literature. When
+plotted against latent trait, it is often called a traceline, item
+characteristic curve, or item response function. Sometimes the word
+'category' or 'outcome' is used in place of 'item'. For example,
+'item response function' might become 'category response
+function'. All these terms refer to the same thing.
 }
 \examples{
 i1 <- rpf.drm()

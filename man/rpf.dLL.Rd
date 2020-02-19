@@ -4,7 +4,7 @@
 \alias{rpf.dLL}
 \alias{rpf.dLL,rpf.base,numeric,numeric,numeric-method}
 \alias{rpf.dLL,rpf.base,numeric,NULL,numeric-method}
-\alias{rpf_dLL_wrapper}
+\alias{_rpf_dLL}
 \title{Item parameter derivatives}
 \usage{
 rpf.dLL(m, param, where, weight)

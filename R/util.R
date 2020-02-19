@@ -3,10 +3,12 @@
 ##' If a reference column is given then only rows that are not missing
 ##' on the reference column are considered. Otherwise all rows are
 ##' considered.
-##' 
-##' @param grp an IFA group
+##'
+##' @template detail-group
+##' @template arg-grp
 ##' @param omit the maximum number of items to omit
 ##' @param ref the reference column (optional)
+##' @family scoring
 bestToOmit <- function(grp, omit, ref=NULL) {
 	if (missing(omit)) stop("How many items to omit?")
 	if (omit == 0) return(NULL)
@@ -30,8 +32,10 @@ bestToOmit <- function(grp, omit, ref=NULL) {
 
 ##' Omit the given items
 ##'
-##' @param grp an IFA group
+##' @template detail-group
+##' @template arg-grp
 ##' @param excol vector of column names to omit
+##' @family scoring
 omitItems <- function(grp, excol) {
 	if (missing(excol)) stop("Which items to omit?")
 	if (length(excol) == 0) return(grp)
@@ -62,18 +66,20 @@ omitItems <- function(grp, excol) {
 ##'
 ##' Items with no missing data are never omitted, regardless of the
 ##' number of items requested.
-##' 
-##' @param grp an IFA group
+##'
+##' @template detail-group
+##' @template arg-grp
 ##' @param omit the maximum number of items to omit
+##' @family scoring
 omitMostMissing <- function(grp, omit) {
 	omitItems(grp, bestToOmit(grp, omit))
 }
 
-ssEAP <- function(grp, qwidth, qpoints, mask, twotier=FALSE, debug=FALSE) {
+ssEAP <- function(grp, mask, twotier=FALSE) {
 	if (missing(mask)) {
 		mask <- rep(TRUE, ncol(grp$param))
 	}
-	.Call(ssEAP_wrapper, grp, qwidth, qpoints, mask, twotier, debug)
+	.Call('_rpf_ssEAP_wrapper', grp, mask, twotier)
 }
 
 #' Collapse small sample size categorical frequency counts
@@ -81,20 +87,20 @@ ssEAP <- function(grp, qwidth, qpoints, mask, twotier=FALSE, debug=FALSE) {
 #' @param observed the observed frequency table
 #' @param expected the expected frequency table
 #' @param minExpected the minimum expected cell frequency
-#' 
+#'
 #' Pearson's X^2 test requires some minimum frequency per cell to
 #' avoid an inflated false positive rate. This function will merge
 #' cells with the lowest frequency counts until all the counts are
 #' above the minimum threshold. Cells that have been merged are filled
 #' with NAs. The resulting tables and number of merged cells is
 #' returned.
-#' 
+#'
 #' @examples
 #' O = matrix(c(7,31,42,20,0), 1,5)
 #' E = matrix(c(3,39,50,8,0), 1,5)
 #' collapseCategoricalCells(O,E,9)
 collapseCategoricalCells <- function(observed, expected, minExpected=1) {
-	.Call(collapse_wrapper, observed, expected, minExpected)
+	.Call('_rpf_collapse', observed, expected, minExpected)
 }
 
 sumScoreEAPTestInternal <- function(result) {
@@ -105,7 +111,7 @@ sumScoreEAPTestInternal <- function(result) {
 
 	result$rms.p <- log(ptw2011.gof.test(obs, expected))
 
-	kc <- .Call(collapse_wrapper, obs, expected, 1.0)
+	kc <- .Call('_rpf_collapse', obs, expected, 1.0)
 	obs <- kc$O
 	expected <- kc$E
 	mask <- !is.na(expected) & expected!=0
@@ -116,12 +122,14 @@ sumScoreEAPTestInternal <- function(result) {
 }
 
 ##' Conduct the sum-score EAP distribution test
-##' 
-##' @param grp a list with spec, param, mean, and cov
-##' @param ...  Not used.  Forces remaining arguments to be specified by name.
-##' @param qwidth positive width of quadrature in Z units
-##' @param qpoints number of quadrature points
+##'
+##' @template detail-group
+##' @template arg-grp
+##' @template arg-dots
+##' @param qwidth DEPRECATED
+##' @param qpoints DEPRECATED
 ##' @param .twotier whether to enable the two-tier optimization
+##' @family diagnostic
 ##' @references
 ##' Li, Z., & Cai, L. (2012, July). Summed score likelihood based indices for testing
 ##' latent variable distribution fit in Item Response Theory. Paper presented at
@@ -134,9 +142,9 @@ sumScoreEAPTest <- function(grp, ..., qwidth=6.0, qpoints=49L, .twotier=TRUE) {
 	if (is.null(grp$data)) {
 		stop("distributionTest cannot be conducted because there is no data")
 	}
-	if (missing(qwidth))  qwidth <- grp$qwidth
-	if (missing(qpoints)) qpoints <- grp$qpoints
-	tbl <- ssEAP(grp, qwidth, qpoints, twotier=.twotier)
+  if (!missing(qwidth) || !missing(qpoints)) complainAboutQuadSpec()
+
+	tbl <- ssEAP(grp, twotier=.twotier)
 	rownames(tbl) <- 0:(nrow(tbl)-1)
 	result <- list(tbl=tbl)
 	oss <- observedSumScore(grp)
@@ -192,7 +200,7 @@ print.summary.sumScoreEAPTest <- function(x,...) {
 ##' missing. Therefore, you can optionally omit items with the
 ##' greatest number of responses missing when conducting the
 ##' distribution test.
-##' 
+##'
 ##' When two-tier covariance structure is detected, EAP scores are
 ##' only reported for primary factors. It is possible to compute EAP
 ##' scores for specific factors, but it is not clear why this would be
@@ -200,22 +208,24 @@ print.summary.sumScoreEAPTest <- function(x,...) {
 ##' scores. Moveover, the algorithm to compute them efficiently has not been
 ##' published yet (as of Jun 2014).
 ##'
-##' @param grp a list with spec, param, mean, and cov
-##' @param ...  Not used.  Forces remaining arguments to be specified by name.
-##' @param qwidth positive width of quadrature in Z units
-##' @param qpoints number of quadrature points
+##' @template detail-group
+##' @template arg-grp
+##' @template arg-dots
+##' @param qwidth DEPRECATED
+##' @param qpoints DEPRECATED
 ##' @param .twotier whether to enable the two-tier optimization
+##' @family scoring
 ##' @examples
 ##' # see Thissen, Pommerich, Billeaud, & Williams (1995, Table 2)
 ##'  spec <- list()
-##'  spec[1:3] <- rpf.grm(outcomes=4)
-##'  
+##'  spec[1:3] <- list(rpf.grm(outcomes=4))
+##'
 ##'  param <- matrix(c(1.87, .65, 1.97, 3.14,
 ##'                    2.66, .12, 1.57, 2.69,
 ##'                    1.24, .08, 2.03, 4.3), nrow=4)
 ##'  # fix parameterization
 ##'  param <- apply(param, 2, function(p) c(p[1], p[2:4] * -p[1]))
-##'  
+##'
 ##'  grp <- list(spec=spec, mean=0, cov=matrix(1,1,1), param=param)
 ##'  sumScoreEAP(grp)
 sumScoreEAP <- function(grp, ..., qwidth=6.0, qpoints=49L, .twotier=TRUE) {
@@ -223,20 +233,24 @@ sumScoreEAP <- function(grp, ..., qwidth=6.0, qpoints=49L, .twotier=TRUE) {
 		stop(paste("Remaining parameters must be passed by name", deparse(list(...))))
 	}
 
-	if (missing(qwidth) && !is.null(grp$qwidth)) { qwidth <- grp$qwidth }
-	if (missing(qpoints) && !is.null(grp$qpoints)) { qpoints <- grp$qpoints }
+  if (!missing(qwidth) || !missing(qpoints)) complainAboutQuadSpec()
 
-	tbl <- ssEAP(grp, qwidth, qpoints, twotier=.twotier)
+	tbl <- ssEAP(grp, twotier=.twotier)
 	rownames(tbl) <- 0:(nrow(tbl)-1)
 	tbl
 }
 
 ##' Compute the observed sum-score
 ##'
-##' @param grp a list with spec, param, and data
-##' @param ...  Not used.  Forces remaining arguments to be specified by name.
+##' When \code{summary=TRUE}, tabulation uses row frequency
+##' multiplied by row weight.
+##'
+##' @template detail-group
+##' @template arg-grp
+##' @template arg-dots
 ##' @param mask a vector of logicals indicating which items to include
 ##' @param summary whether to return a summary (default) or per-row scores
+##' @family scoring
 ##' @examples
 ##' spec <- list()
 ##' spec[1:3] <- rpf.grm(outcomes=3)
@@ -259,7 +273,7 @@ observedSumScore <- function(grp, ..., mask, summary=TRUE) {
 		names(ss) <- rownames(dat)
 		return(ss)
 	}
-	got <- .Call(observedSumScore_wrapper, grp, mask)
+	got <- .Call('_rpf_observedSumScore_cpp', grp, mask)
 	if (got[['n']] == 0) {
 		warning("Some columns are all missing; cannot compute observedSumScore")
 	}
@@ -274,9 +288,11 @@ print.summary.observedSumScore <- function(x,...) {
 
 ##' Produce an item outcome by observed sum-score table
 ##'
-##' @param grp a list with spec, param, and data
+##' @template arg-grp
 ##' @param mask a vector of logicals indicating which items to include
 ##' @param interest index or name of the item of interest
+##' @template detail-group
+##' @family scoring
 ##' @examples
 ##' set.seed(1)
 ##' spec <- list()
@@ -290,7 +306,7 @@ itemOutcomeBySumScore <- function(grp, mask, interest) {
 	if (is.character(interest)) {
 		interest <- match(interest, colnames(grp$param))
 	}
-	got <- .Call(itemOutcomeBySumScore_wrapper, grp, mask, interest)
+	got <- .Call('_rpf_itemOutcomeBySumScore_cpp', grp, mask, interest)
 	rownames(got$table) <- 0:(nrow(got$table)-1L)
 	col <- colnames(grp$param)[interest]
 	colnames(got$table) <- levels(grp$data[,col])
@@ -319,10 +335,13 @@ print.summary.itemOutcomeBySumScore <- function(x,...) {
 ##' to set \code{minItemsPerScore} to 0. When set to 0, all NA rows
 ##' are scored to the prior distribution.
 ##'
-##' @param grp a list with spec, param, data, and minItemsPerScore
-##' @param ...  Not used.  Forces remaining arguments to be specified by name.
-##' @param naAction deprecated, will be removed in the next release
-##' @param compressed output one score per observed data row even when weightColumn is set (default FALSE)
+##' Output is not affected by the presence of a \code{weightColumn}.
+##'
+##' @template detail-group
+##' @template arg-grp
+##' @template arg-dots
+##' @param compressed output one score per observed data row even when freqColumn is set (default FALSE)
+##' @family scoring
 ##' @examples
 ##' spec <- list()
 ##' spec[1:3] <- list(rpf.grm(outcomes=3))
@@ -331,17 +350,15 @@ print.summary.itemOutcomeBySumScore <- function(x,...) {
 ##' colnames(param) <- colnames(data)
 ##' grp <- list(spec=spec, param=param, data=data, minItemsPerScore=1L)
 ##' EAPscores(grp)
-EAPscores <- function(grp, ..., naAction=NULL, compressed=FALSE) {
+EAPscores <- function(grp, ..., compressed=FALSE) {
 	if (length(list(...)) > 0) {
 		stop(paste("Remaining parameters must be passed by name", deparse(list(...))))
 	}
 
-	if (!missing(naAction)) warning("naAction is deprecated")
+	ctbl <- .Call('_rpf_eap_wrapper', grp)
 
-	ctbl <- .Call(eap_wrapper, grp)
-
-	if (!compressed && !is.null(grp$weightColumn)) {
-		freq <- grp$data[[ grp$weightColumn ]]
+	if (!compressed && !is.null(grp$freqColumn)) {
+		freq <- grp$data[[ grp$freqColumn ]]
 		rows <- sum(freq)
 		indexVector <- rep(NA, rows)
 		rx <- 1L
@@ -361,12 +378,12 @@ EAPscores <- function(grp, ..., naAction=NULL, compressed=FALSE) {
 #'
 #' All slopes are divided by the ogive constant. Then the following
 #' transformation is applied to the slope matrix,
-#' 
+#'
 #' \deqn{\frac{\mathrm{slope}}{\left[ 1 + \mathrm{rowSums}(\mathrm{slope}^2) \right]^\frac{1}{2}}}
 #'
 #' @param slope a matrix with items in the columns and slopes in the rows
-#' @param ogive the ogive constant (default rpf.ogive)
-#' @seealso \link{rpf.ogive}
+#' @param ogive the ogive constant (default \link{rpf.ogive})
+#' @family factor model equivalence
 #' @return
 #' a factor loading matrix with items in the rows and factors in the columns
 toFactorLoading <- function(slope, ogive=rpf.ogive) {
@@ -382,7 +399,8 @@ toFactorLoading <- function(slope, ogive=rpf.ogive) {
 #' Convert factor loadings to response function slopes
 #'
 #' @param loading a matrix with items in the rows and factors in the columns
-#' @param ogive the ogive constant (default rpf.ogive)
+#' @param ogive the ogive constant (default \link{rpf.ogive})
+#' @family factor model equivalence
 #' @return
 #' a slope matrix with items in the columns and factors in the rows
 fromFactorLoading <- function(loading, ogive=rpf.ogive) {
@@ -393,7 +411,8 @@ fromFactorLoading <- function(loading, ogive=rpf.ogive) {
 #'
 #' @param intercept a matrix with items in the columns and intercepts in the rows
 #' @param slope a matrix with items in the columns and slopes in the rows
-#' @param ogive the ogive constant (default rpf.ogive)
+#' @param ogive the ogive constant (default \link{rpf.ogive})
+#' @family factor model equivalence
 #' @return
 #' a factor threshold matrix with items in the columns and factor thresholds in the rows
 toFactorThreshold <- function(intercept, slope, ogive=rpf.ogive) {
@@ -407,7 +426,8 @@ toFactorThreshold <- function(intercept, slope, ogive=rpf.ogive) {
 #'
 #' @param threshold a matrix with items in the columns and thresholds in the rows
 #' @param loading a matrix with items in the rows and factors in the columns
-#' @param ogive the ogive constant (default rpf.ogive)
+#' @param ogive the ogive constant (default \link{rpf.ogive})
+#' @family factor model equivalence
 #' @return
 #' an item intercept matrix with items in the columns and intercepts in the rows
 fromFactorThreshold <- function(threshold, loading, ogive=rpf.ogive) {

@@ -41,3 +41,13 @@ of flexibility.
 spec <- rpf.grm()
 rpf.prob(spec, rpf.rparam(spec), 0)
 }
+\seealso{
+Other response model: 
+\code{\link{rpf.drm}()},
+\code{\link{rpf.gpcmp}()},
+\code{\link{rpf.grmp}()},
+\code{\link{rpf.lmp}()},
+\code{\link{rpf.mcm}()},
+\code{\link{rpf.nrm}()}
+}
+\concept{response model}

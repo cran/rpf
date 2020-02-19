@@ -18,6 +18,7 @@ alpha level) rejects the hypothesis that the two matrices are from
 the same distribution.
 }
 \description{
+\lifecycle{experimental}
 This test is an alternative to Pearson's X^2
 goodness-of-fit test.  In contrast to Pearson's X^2, no ad hoc cell
 collapsing is needed to avoid an inflated false positive rate

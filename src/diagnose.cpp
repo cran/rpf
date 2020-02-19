@@ -15,7 +15,7 @@ class ssEAP {
 
 public:
 	ifaGroup grp;
-	int *mask;
+	const int *mask;
 	int maxScore;
 	std::vector<int> items;
 
@@ -28,9 +28,9 @@ public:
 	Eigen::ArrayXi ttPrevCurMax;
 	Eigen::ArrayXXd slPrev;
 	Eigen::ArrayXd ssProbPrev;
-	
-	ssEAP(bool twotier) : grp(1, twotier) {}
-	void setup(SEXP grp, double qwidth, int qpts, int *_mask);
+
+	ssEAP(bool twotier) : grp(twotier) { grp.quad.setNumThreads(1); }
+	void setup(SEXP grp, const int *_mask);
 	void setLastItem(int which);
 	void tpbw1995Vanilla();
 	void tpbw1995TwoTier();
@@ -41,14 +41,12 @@ public:
 	void tt2ss(Eigen::ArrayBase<T1> &curMax, Eigen::ArrayBase<T2> &slCur, Eigen::ArrayBase<T3> &ssProbCur);
 };
 
-void ssEAP::setup(SEXP robj, double qwidth, int qpts, int *_mask)
+void ssEAP::setup(SEXP robj, const int *_mask)
 {
 	lastItem = -1;
 	mask = _mask;
 
-	grp.setGridFineness(qwidth, qpts);
-	grp.import(robj, true);
-	grp.setupQuadrature();
+	grp.import(robj);
 }
 
 void ssEAP::setLastItem(int which)
@@ -75,7 +73,7 @@ void ssEAP::tpbw1995()
 {
 	tpbw1995Prep();
 
-	if (grp.numSpecific == 0) {
+	if (!grp.quad.hasBifactorStructure) {
 		tpbw1995Vanilla();
 	} else {
 		tpbw1995TwoTier();
@@ -84,11 +82,13 @@ void ssEAP::tpbw1995()
 
 void ssEAP::tpbw1995Vanilla()
 {
-	ba81NormalQuad &quad = grp.quad;
-	slCur.resize(quad.totalQuadPoints, 1+maxScore);
-	Eigen::Map<Eigen::ArrayXd> areaCol(quad.priQarea.data(), quad.priQarea.size());
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
+	slCur.resize(layer.totalQuadPoints, 1+maxScore);
+	Eigen::Map<Eigen::ArrayXd> areaCol(layer.priQarea.data(), layer.priQarea.size());
 	slCur.colwise() = areaCol;
 
+	Eigen::VectorXi abx(layer.maxDims);
+	Eigen::VectorXd where(layer.maxDims);
 	int curMax = 0;
 	int item0 = items[0];
 	{
@@ -99,10 +99,10 @@ void ssEAP::tpbw1995Vanilla()
 		double *iparam = grp.getItemParam(item0);
 		int outcomes = grp.itemOutcomes[item0];
 		Eigen::VectorXd oprob(outcomes);
-		for (int qx=0; qx < quad.totalQuadPoints; ++qx) {
-			double *where = quad.wherePrep.data() + qx * quad.maxDims;
+		for (int qx=0; qx < layer.totalQuadPoints; ++qx) {
+			layer.pointToGlobalAbscissa(qx, abx, where);
 			for (int dx=0; dx < dims; dx++) {
-				ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+				ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 			}
 			Glibrpf_model[id].prob(spec, iparam, ptheta.data(), oprob.data());
 			for (int ox=0; ox < outcomes; ++ox) {
@@ -112,7 +112,7 @@ void ssEAP::tpbw1995Vanilla()
 		curMax += outcomes - 1;
 	}
 
-	slPrev.resize(quad.totalQuadPoints, 1+maxScore);
+	slPrev.resize(layer.totalQuadPoints, 1+maxScore);
 
 	for (int curItem=1; curItem < int(items.size()); ++curItem) {
 		int ix = items[curItem];
@@ -125,10 +125,10 @@ void ssEAP::tpbw1995Vanilla()
 		int outcomes = grp.itemOutcomes[ix];
 		Eigen::VectorXd oprob(outcomes);
 		slCur.topLeftCorner(slCur.rows(), curMax + outcomes).setZero();
-		for (int qx=0; qx < quad.totalQuadPoints; ++qx) {
-			double *where = quad.wherePrep.data() + qx * quad.maxDims;
+		for (int qx=0; qx < layer.totalQuadPoints; ++qx) {
+			layer.pointToGlobalAbscissa(qx, abx, where);
 			for (int dx=0; dx < dims; dx++) {
-				ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+				ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 			}
 			Glibrpf_model[id].prob(spec, iparam, ptheta.data(), oprob.data());
 			for (int cx=0; cx <= curMax; cx++) {
@@ -138,7 +138,7 @@ void ssEAP::tpbw1995Vanilla()
 			}
 		}
 		curMax += outcomes - 1;
-		R_CheckUserInterrupt();
+		checkUserInterrupt();
 	}
 
 	ssProbCur.resize(1+maxScore);
@@ -151,16 +151,17 @@ template <typename T1, typename T2>
 void ssEAP::aggregateSpecific(Eigen::ArrayBase<T1> &inMat, Eigen::ArrayBase<T2> &Eis)
 {
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
 
 	Eis.setZero();
-	for (int qx=0, qloc = 0, eisloc = 0; qx < quad.totalPrimaryPoints; qx++) {
-		for (int sx=0; sx < quad.quadGridSize; sx++) {
-			for (int sgroup=0; sgroup < quad.numSpecific; ++sgroup) {
+	for (int qx=0, qloc = 0, eisloc = 0; qx < layer.totalPrimaryPoints; qx++) {
+		for (int sx=0; sx < quad.gridSize; sx++) {
+			for (int sgroup=0; sgroup < layer.numSpecific; ++sgroup) {
 				Eis.row(eisloc + sgroup) += inMat.row(qloc);
 				++qloc;
 			}
 		}
-		eisloc += quad.numSpecific;
+		eisloc += layer.numSpecific;
 	}
 }
 
@@ -168,6 +169,7 @@ template <typename T1, typename T2, typename T3>
 void ssEAP::tt2prod(Eigen::ArrayBase<T1> &tt, Eigen::ArrayBase<T2> &buffer, Eigen::ArrayBase<T3> &perSpecific)
 {
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
 
 	int combinations = perSpecific.prod();
 	int destRows = tt.rows() / perSpecific.rows();
@@ -176,7 +178,7 @@ void ssEAP::tt2prod(Eigen::ArrayBase<T1> &tt, Eigen::ArrayBase<T2> &buffer, Eige
 	for (int qx=0; qx < destRows; qx++) {
 		for (int cx=0; cx < combinations; ++cx) {
 			int chip = cx;
-			for (int sgroup=0; sgroup < quad.numSpecific; ++sgroup) {
+			for (int sgroup=0; sgroup < layer.numSpecific; ++sgroup) {
 				int col = chip % perSpecific[sgroup];
 				chip /= perSpecific[sgroup];
 				buffer(qx, cx) *= tt(qx * perSpecific.rows() + sgroup, col);
@@ -189,6 +191,7 @@ template <typename T1, typename T2, typename T3>
 void ssEAP::prod2ss(Eigen::ArrayBase<T1> &buffer, Eigen::ArrayBase<T2> &ssMat, Eigen::ArrayBase<T3> &perSpecific)
 {
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
 
 	int combinations = perSpecific.prod();
 
@@ -196,7 +199,7 @@ void ssEAP::prod2ss(Eigen::ArrayBase<T1> &buffer, Eigen::ArrayBase<T2> &ssMat, E
 	for (int cx=0; cx < combinations; ++cx) {
 		int chip = cx;
 		int ss = 0;
-		for (int sgroup=0; sgroup < quad.numSpecific; ++sgroup) {
+		for (int sgroup=0; sgroup < layer.numSpecific; ++sgroup) {
 			ss += chip % perSpecific[sgroup];
 			chip /= perSpecific[sgroup];
 		}
@@ -210,20 +213,21 @@ void ssEAP::tt2ss(Eigen::ArrayBase<T1> &curMax1, Eigen::ArrayBase<T2> &curTbl,
 {
 	int numScores = 1+maxScore;
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
 
-	Eigen::ArrayXXd Eis(quad.totalPrimaryPoints * quad.numSpecific, numScores);
+	Eigen::ArrayXXd Eis(layer.totalPrimaryPoints * layer.numSpecific, numScores);
 	aggregateSpecific(curTbl, Eis);
 
 	Eigen::ArrayXi perSpecific = curMax1 + 1;
 	int combinations = perSpecific.prod();
 
-	Eigen::ArrayXXd prodEis(quad.totalPrimaryPoints, combinations);
+	Eigen::ArrayXXd prodEis(layer.totalPrimaryPoints, combinations);
 	tt2prod(Eis, prodEis, perSpecific);
 
-	outTbl.derived().resize(quad.totalPrimaryPoints, numScores);
+	outTbl.derived().resize(layer.totalPrimaryPoints, numScores);
 	prod2ss(prodEis, outTbl, perSpecific);
 
-	Eigen::Map<Eigen::ArrayXd> areaCol(quad.priQarea.data(), quad.priQarea.size());
+	Eigen::Map<Eigen::ArrayXd> areaCol(layer.priQarea.data(), layer.priQarea.size());
 	outTbl.colwise() *= areaCol;
 }
 
@@ -232,24 +236,27 @@ void ssEAP::tpbw1995TwoTier()
 	int numScores = 1+maxScore;
 
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
 
-	Eigen::ArrayXd speAreaCol(quad.totalQuadPoints * quad.numSpecific);
-	for (int qx=0, qloc = 0; qx < quad.totalPrimaryPoints; qx++) {
-		for (int sx=0; sx < quad.quadGridSize * quad.numSpecific; sx++) {
-			speAreaCol[qloc] = quad.speQarea[sx];
+	Eigen::ArrayXd speAreaCol(layer.totalQuadPoints * layer.numSpecific);
+	for (int qx=0, qloc = 0; qx < layer.totalPrimaryPoints; qx++) {
+		for (int sx=0; sx < quad.gridSize * layer.numSpecific; sx++) {
+			speAreaCol[qloc] = layer.speQarea[sx];
 			++qloc;
 		}
 	}
 
-	ttCur.resize(quad.totalQuadPoints * quad.numSpecific, numScores);
-	ttPrev.resize(quad.totalQuadPoints * quad.numSpecific, numScores);
+	ttCur.resize(layer.totalQuadPoints * layer.numSpecific, numScores);
+	ttPrev.resize(layer.totalQuadPoints * layer.numSpecific, numScores);
 	ttCur.colwise() = speAreaCol;
 	ttPrev.colwise() = speAreaCol;
 
-	ttCurMax.resize(quad.numSpecific);
+	ttCurMax.resize(layer.numSpecific);
 	ttCurMax.setZero();
 	ttPrevCurMax = ttCurMax;
 
+	Eigen::VectorXi abx(layer.maxDims);
+	Eigen::VectorXd where(layer.maxDims);
 	int item0 = items[0];
 	{
 		const double *spec = grp.spec[item0];
@@ -258,16 +265,16 @@ void ssEAP::tpbw1995TwoTier()
 		Eigen::VectorXd ptheta(dims);
 		double *iparam = grp.getItemParam(item0);
 		int outcomes = grp.itemOutcomes[item0];
-		int Sgroup = grp.Sgroup[item0];
+		int Sgroup = layer.Sgroup[item0];
 		Eigen::VectorXd oprob(outcomes);
-		for (int qx=0; qx < quad.totalQuadPoints; ++qx) {
-			double *where = quad.wherePrep.data() + qx * quad.maxDims;
+		for (int qx=0; qx < layer.totalQuadPoints; ++qx) {
+			layer.pointToGlobalAbscissa(qx, abx, where);
 			for (int dx=0; dx < dims; dx++) {
-				ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+				ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 			}
 			Glibrpf_model[id].prob(spec, iparam, ptheta.data(), oprob.data());
 			for (int ox=0; ox < outcomes; ++ox) {
-				ttCur(qx * quad.numSpecific + Sgroup, ox) *= oprob[ox];
+				ttCur(qx * layer.numSpecific + Sgroup, ox) *= oprob[ox];
 			}
 		}
 		ttCurMax(Sgroup) += outcomes - 1;
@@ -283,14 +290,14 @@ void ssEAP::tpbw1995TwoTier()
 		Eigen::VectorXd ptheta(dims);
 		double *iparam = grp.getItemParam(ix);
 		int outcomes = grp.itemOutcomes[ix];
-		int Sgroup = grp.Sgroup[ix];
+		int Sgroup = layer.Sgroup[ix];
 		Eigen::VectorXd oprob(outcomes);
-		for (int qx=0; qx < quad.totalQuadPoints; ++qx) {
-			int row = qx * quad.numSpecific + Sgroup;
+		for (int qx=0; qx < layer.totalQuadPoints; ++qx) {
+			int row = qx * layer.numSpecific + Sgroup;
 			ttCur.row(row).setZero();
-			double *where = quad.wherePrep.data() + qx * quad.maxDims;
+			layer.pointToGlobalAbscissa(qx, abx, where);
 			for (int dx=0; dx < dims; dx++) {
-				ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+				ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 			}
 			Glibrpf_model[id].prob(spec, iparam, ptheta.data(), oprob.data());
 			for (int cx=0; cx <= ttCurMax(Sgroup); cx++) {
@@ -300,7 +307,7 @@ void ssEAP::tpbw1995TwoTier()
 			}
 		}
 		ttCurMax(Sgroup) += outcomes - 1;
-		R_CheckUserInterrupt();
+		checkUserInterrupt();
 	}
 
 	tt2ss(ttCurMax, ttCur, slCur);
@@ -316,13 +323,14 @@ template <typename T1, typename T2>
 void otMix(ssEAP &myeap, int Sgroup, int ox, Eigen::ArrayBase<T1> &iProb, Eigen::ArrayBase<T2> &numer)
 {
 	ba81NormalQuad &quad = myeap.grp.quad;
+	ba81NormalQuad::layer &layer = quad.getLayer();
 
-	if (quad.numSpecific == 0) {
+	if (layer.numSpecific == 0) {
 		numer = (myeap.slPrev.colwise() * iProb.col(ox)).colwise().sum();
 	} else {
 		Eigen::ArrayXXd ttPrev = myeap.ttPrev;
-		for (int qx = 0; qx < quad.totalQuadPoints; ++qx) {
-			ttPrev.row(qx*quad.numSpecific + Sgroup) *= iProb(qx, ox);
+		for (int qx = 0; qx < layer.totalQuadPoints; ++qx) {
+			ttPrev.row(qx*layer.numSpecific + Sgroup) *= iProb(qx, ox);
 		}
 		Eigen::ArrayXXd ssPrev;
 		myeap.tt2ss(myeap.ttPrevCurMax, ttPrev, ssPrev);
@@ -330,17 +338,13 @@ void otMix(ssEAP &myeap, int Sgroup, int ox, Eigen::ArrayBase<T1> &iProb, Eigen:
 	}
 }
 
-SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
-		    SEXP Rmask, SEXP Rtwotier)
+// [[Rcpp::export]]
+SEXP ot2000(SEXP robj, int iPlusOne, bool alter, const LogicalVector &mask, bool twoTier)
 {
-	ProtectAutoBalanceDoodad mpi;
+	int interest = iPlusOne - 1;
 
-	double qwidth = Rf_asReal(Rwidth);
-	int qpts = Rf_asInteger(Rpts);
-	int interest = Rf_asInteger(Ritem) - 1;
-
-	ssEAP myeap(Rf_asLogical(Rtwotier));
-	myeap.setup(robj, qwidth, qpts, LOGICAL(Rmask));
+	ssEAP myeap(twoTier);
+	myeap.setup(robj, mask.begin());
 	myeap.setLastItem(interest);
 	myeap.tpbw1995();
 
@@ -348,7 +352,10 @@ SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
 
 	ifaGroup &grp = myeap.grp;
 	ba81NormalQuad &quad = myeap.grp.quad;
-	Eigen::ArrayXXd iProb(quad.totalQuadPoints, outcomes);
+	ba81NormalQuad::layer &layer = grp.quad.getLayer();
+	Eigen::ArrayXXd iProb(layer.totalQuadPoints, outcomes);
+	Eigen::VectorXi abx(layer.maxDims);
+	Eigen::VectorXd where(layer.maxDims);
 
 	{
 		const double *spec = grp.spec[interest];
@@ -357,10 +364,10 @@ SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
 		Eigen::VectorXd ptheta(dims);
 		double *iparam = grp.getItemParam(interest);
 		Eigen::ArrayXd oprob(outcomes);
-		for (int qx=0; qx < quad.totalQuadPoints; ++qx) {
-			double *where = quad.wherePrep.data() + qx * quad.maxDims;
+		for (int qx=0; qx < layer.totalQuadPoints; ++qx) {
+			layer.pointToGlobalAbscissa(qx, abx, where);
 			for (int dx=0; dx < dims; dx++) {
-				ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+				ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 			}
 			Glibrpf_model[id].prob(spec, iparam, ptheta.data(), oprob.data());
 			for (int ox=0; ox < outcomes; ox++) {
@@ -370,15 +377,14 @@ SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
 	}
 
 	int Sgroup = 0;
-	if (quad.numSpecific) Sgroup = grp.Sgroup[interest];
+	if (layer.numSpecific) Sgroup = layer.Sgroup[interest];
 
-	if (Rf_asLogical(Ralter)) {
+	if (alter) {
 		// as documented in various publications
 		Eigen::ArrayXd &ssProb = myeap.ssProbCur;
 
-		SEXP Rexpected;
-		Rf_protect(Rexpected = Rf_allocMatrix(REALSXP, 1+myeap.maxScore, outcomes));
-		Eigen::Map< Eigen::ArrayXXd > out(REAL(Rexpected), 1+myeap.maxScore, outcomes);
+		NumericMatrix Rexpected(1+myeap.maxScore, outcomes);
+		Eigen::Map< Eigen::ArrayXXd > out(Rexpected.begin(), 1+myeap.maxScore, outcomes);
 		out.setZero();
 
 		for (int ox=0; ox < outcomes; ++ox) {
@@ -395,8 +401,7 @@ SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
 		Eigen::ArrayXd &ssProb = myeap.ssProbPrev;
 
 		int prevMaxScore = myeap.maxScore - (outcomes-1);
-		SEXP Rexpected;
-		Rf_protect(Rexpected = Rf_allocMatrix(REALSXP, prevMaxScore + 1, outcomes));
+		NumericMatrix Rexpected(prevMaxScore + 1, outcomes);
 		Eigen::Map< Eigen::ArrayXXd > out(REAL(Rexpected), prevMaxScore + 1, outcomes);
 
 		for (int ox=0; ox < outcomes; ++ox) {
@@ -411,99 +416,89 @@ SEXP ot2000_wrapper(SEXP robj, SEXP Ritem, SEXP Rwidth, SEXP Rpts, SEXP Ralter,
 	}
 }
 
-SEXP sumscoreEAP(SEXP robj, SEXP Rwidth, SEXP Rpts, SEXP Rmask, SEXP twotier, SEXP debug)
+// [[Rcpp::export]]
+NumericMatrix ssEAP_wrapper(SEXP robj, SEXP Rmask, bool twoTier)
 {
-	ProtectAutoBalanceDoodad mpi;
-
-	double qwidth = Rf_asReal(Rwidth);
-	int qpts = Rf_asInteger(Rpts);
-
-	ssEAP myeap(Rf_asLogical(twotier));
-	myeap.setup(robj, qwidth, qpts, LOGICAL(Rmask));
+	ssEAP myeap(twoTier);
+	myeap.setup(robj, LOGICAL(Rmask));
 	myeap.tpbw1995();
 
 	ba81NormalQuad &quad = myeap.grp.quad;
+	ba81NormalQuad::layer &layer = quad.getLayer();
 	ifaGroup &grp = myeap.grp;
-	Eigen::ArrayXXd &slCur = myeap.slCur;
 
-	if (Rf_asLogical(debug)) {
-		SEXP Rout;
-		Rf_protect(Rout = Rf_allocMatrix(REALSXP, slCur.rows(), slCur.cols()));
-		memcpy(REAL(Rout), slCur.data(), sizeof(double) * slCur.rows() * slCur.cols());
-		return Rout;
-	}
+	Eigen::ArrayXXd &slCur = myeap.slCur;
 
 	int curMax = myeap.maxScore;
 	int outRows = 1 + curMax;
-	int outCols = 1 + 2 * quad.primaryDims + triangleLoc1(quad.primaryDims);
+	int outCols = 1 + 2 * layer.primaryDims + triangleLoc1(layer.primaryDims);
 
-	SEXP dimnames;
-	Rf_protect(dimnames = Rf_allocVector(VECSXP, 2));
-	SET_VECTOR_ELT(dimnames, 0, R_NilValue);
-
-	SEXP names;
-	Rf_protect(names = Rf_allocVector(STRSXP, outCols));
-	SET_STRING_ELT(names, 0, Rf_mkChar("p"));
-	for (int ax=0; ax < quad.primaryDims; ++ax) {
+	List dimnames(2);
+	CharacterVector names(outCols);
+	names[0] = "p";
+	for (int ax=0; ax < layer.primaryDims; ++ax) {
 		const int SMALLBUF = 20;
 		char buf[SMALLBUF];
-		SET_STRING_ELT(names, 1+ax, Rf_mkChar(grp.factorNames[ax].c_str()));
+		names[1+ax] = grp.factorNames[ax].c_str();
 		snprintf(buf, SMALLBUF, "se%d", 1+ax);
-		SET_STRING_ELT(names, 1+quad.primaryDims+ax, Rf_mkChar(buf));
+		names[1+layer.primaryDims+ax] = buf;
 	}
-	for (int cx=0; cx < triangleLoc1(quad.primaryDims); ++cx) {
+	for (int cx=0; cx < triangleLoc1(layer.primaryDims); ++cx) {
 		const int SMALLBUF = 20;
 		char buf[SMALLBUF];
 		snprintf(buf, SMALLBUF, "cov%d", 1+cx);
-		SET_STRING_ELT(names, 1+2*quad.primaryDims+cx, Rf_mkChar(buf));
+		names[1+2*layer.primaryDims+cx] = buf;
 	}
-	SET_VECTOR_ELT(dimnames, 1, names);
+	dimnames[1] = names;
 
 	Eigen::ArrayXd &ssProb = myeap.ssProbCur;
 
 	ba81NormalQuad pquad;  //primary only
-	Eigen::Map<Eigen::MatrixXd> fullCov(grp.cov, grp.maxAbilities, grp.maxAbilities);
-	Eigen::MatrixXd priCov = fullCov.block(0, 0, quad.primaryDims, quad.primaryDims);
-	Eigen::VectorXd sVar;
-	pquad.setup(grp.qwidth, grp.qpoints, grp.mean, priCov, sVar);
+	pquad.setNumThreads(1);
+	Eigen::Map< Eigen::VectorXd > meanVec(grp.mean, layer.primaryDims);
+	Eigen::Map<Eigen::MatrixXd> fullCov(grp.cov, grp.quad.abilities(), grp.quad.abilities());
+	Eigen::MatrixXd priCov = fullCov.block(0, 0, layer.primaryDims, layer.primaryDims);
+	Eigen::Map< Eigen::ArrayXXd > Eparam(grp.param, grp.paramRows, grp.numItems());
+	pquad.setStructure(grp.qwidth, grp.qpoints, Eparam, meanVec, priCov, false);
+	pquad.refresh(meanVec, priCov);
 
-	SEXP Rout;
-	Rf_protect(Rout = Rf_allocMatrix(REALSXP, outRows, outCols));
-	Rf_setAttrib(Rout, R_DimNamesSymbol, dimnames);
-	double *out = REAL(Rout);
+	NumericMatrix Rout(outRows, outCols);
+	Rout.attr("dimnames") = dimnames;
+	double *out = Rout.begin();
 	memcpy(out, ssProb.data(), sizeof(double) * outRows);
 	for (int cx=0; cx <= curMax; cx++) {
-		std::vector<double> pad(quad.primaryDims + triangleLoc1(quad.primaryDims));
-		pquad.EAP(&slCur.coeffRef(0, cx), 1/ssProb[cx], pad.data());
-		for (int sx=0; sx < quad.primaryDims; ++sx) {
+		Eigen::ArrayXd pad(layer.primaryDims + triangleLoc1(layer.primaryDims));
+		Eigen::Map< Eigen::ArrayXd > slCurCol(&slCur.coeffRef(0, cx), slCur.rows());
+		pquad.EAP(slCurCol, ssProb[cx], pad);
+		for (int sx=0; sx < layer.primaryDims; ++sx) {
 			out[(1+sx) * outRows + cx] = pad[sx];
-			out[(1+quad.primaryDims+sx) * outRows + cx] = sqrt(pad[quad.primaryDims + triangleLoc0(sx)]);
+			out[(1+layer.primaryDims+sx) * outRows + cx] = sqrt(pad[layer.primaryDims + triangleLoc0(sx)]);
 		}
-		for (int sx=0; sx < triangleLoc1(quad.primaryDims); ++sx) {
-			out[(1+2*quad.primaryDims+sx) * outRows + cx] = pad[quad.primaryDims + sx];
+		for (int sx=0; sx < triangleLoc1(layer.primaryDims); ++sx) {
+			out[(1+2*layer.primaryDims+sx) * outRows + cx] = pad[layer.primaryDims + sx];
 		}
+		checkUserInterrupt();
 	}
 
 	return Rout;
 }
 
-SEXP pairwiseExpected(SEXP robj, SEXP Rwidth, SEXP Rpts, SEXP Ritems, SEXP Rtwotier)
+// [[Rcpp::export]]
+NumericMatrix pairwiseExpected_cpp(SEXP robj, IntegerVector items, bool twoTier)
 {
-	ProtectAutoBalanceDoodad mpi;
+	if (items.size() != 2) stop("A pair of items must be specified");
 
-	if (Rf_length(Ritems) != 2) Rf_error("A pair of items must be specified");
+	ifaGroup grp(twoTier);
+	grp.quad.setNumThreads(1);
+	grp.import(robj);
 
-	ifaGroup grp(1, Rf_asLogical(Rtwotier));
-	grp.setGridFineness(Rf_asReal(Rwidth), Rf_asInteger(Rpts));
-	grp.import(robj, false); // lenient=true is probably okay, need to test
-	grp.setupQuadrature();
-	
 	ba81NormalQuad &quad = grp.quad;
+	ba81NormalQuad::layer &layer = quad.getLayer();
 
-	int i1 = INTEGER(Ritems)[0];
-	int i2 = INTEGER(Ritems)[1];
-	if (i1 < 0 || i1 >= (int) grp.spec.size()) Rf_error("Item %d out of range", i1);
-	if (i2 < 0 || i2 >= (int) grp.spec.size()) Rf_error("Item %d out of range", i2);
+	int i1 = items[0];
+	int i2 = items[1];
+	if (i1 < 0 || i1 >= (int) grp.spec.size()) stop("Item %d out of range", i1);
+	if (i2 < 0 || i2 >= (int) grp.spec.size()) stop("Item %d out of range", i2);
 	if (i1 == i2) Rf_warning("Request to create bivariate distribution of %d with itself", i1);
 
 	double *i1par = &grp.param[i1 * grp.paramRows];
@@ -511,9 +506,9 @@ SEXP pairwiseExpected(SEXP robj, SEXP Rwidth, SEXP Rpts, SEXP Ritems, SEXP Rtwot
 
 	int specific1 = -1;
 	int specific2 = -1;
-	if (grp.numSpecific) {
-		int priDims = quad.maxDims-1;
-		for (int ax=priDims; ax < quad.maxAbilities; ax++) {
+	if (layer.numSpecific) {
+		int priDims = layer.maxDims-1;
+		for (int ax=priDims; ax < quad.abilities(); ax++) {
 			if (i1par[ax] != 0) {
 				specific1 = ax - priDims;
 			}
@@ -531,36 +526,36 @@ SEXP pairwiseExpected(SEXP robj, SEXP Rwidth, SEXP Rpts, SEXP Ritems, SEXP Rtwot
 	int id2 = spec2[RPF_ISpecID];
 	int outcomes2 = spec2[RPF_ISpecOutcomes];
 
-	SEXP Rexpected;
-	Rf_protect(Rexpected = Rf_allocMatrix(REALSXP, outcomes1, outcomes2));
-	double *outMem = REAL(Rexpected);
-	Eigen::Map<Eigen::MatrixXd> out(outMem, outcomes1, outcomes2);
+	NumericMatrix Rexpected(outcomes1, outcomes2);
+	Eigen::Map<Eigen::MatrixXd> out(Rexpected.begin(), outcomes1, outcomes2);
 	out.setZero();
 
 	// See Cai & Hansen (2012) Eqn 25, 26
 
+	Eigen::VectorXi abx(layer.maxDims);
+	Eigen::VectorXd where(layer.maxDims);
 	Eigen::VectorXd o1(outcomes1);
 	Eigen::VectorXd o2(outcomes2);
 
 	if (specific1 == -1 && specific2 == -1) {
-		int specificIncr = quad.numSpecific? quad.quadGridSize : 1;
-		for (int qx=0; qx < quad.totalPrimaryPoints; ++qx) {
-			double *where = quad.wherePrep.data() + qx * quad.maxDims * specificIncr;
-			(*Glibrpf_model[id1].prob)(spec1, i1par, where, o1.data());
-			(*Glibrpf_model[id2].prob)(spec2, i2par, where, o2.data());
-			out += (o1 * o2.transpose()) * quad.priQarea[qx];
+		int specificIncr = layer.numSpecific? quad.gridSize : 1;
+		for (int qx=0; qx < layer.totalPrimaryPoints; ++qx) {
+			layer.pointToGlobalAbscissa(qx * specificIncr, abx, where);
+			(*Glibrpf_model[id1].prob)(spec1, i1par, where.data(), o1.data());
+			(*Glibrpf_model[id2].prob)(spec2, i2par, where.data(), o2.data());
+			out += (o1 * o2.transpose()) * layer.priQarea[qx];
 		}
 	} else if (specific1 == specific2) {
-		Eigen::VectorXd ptheta(quad.maxAbilities);
-		for (int qloc=0, qx=0; qx < quad.totalPrimaryPoints; ++qx) {
-			for (int sx=0; sx < quad.quadGridSize; ++sx) {
-				double *where = quad.wherePrep.data() + qloc * quad.maxDims;
-				for (int dx=0; dx < quad.maxAbilities; dx++) {
-					ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+		Eigen::VectorXd ptheta(quad.abilities());
+		for (int qloc=0, qx=0; qx < layer.totalPrimaryPoints; ++qx) {
+			for (int sx=0; sx < quad.gridSize; ++sx) {
+				layer.pointToGlobalAbscissa(qloc, abx, where);
+				for (int dx=0; dx < quad.abilities(); dx++) {
+					ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 				}
 				(*Glibrpf_model[id1].prob)(spec1, i1par, ptheta.data(), o1.data());
 				(*Glibrpf_model[id2].prob)(spec2, i2par, ptheta.data(), o2.data());
-				double area = quad.priQarea[qx] * quad.speQarea[sx * quad.numSpecific + specific1];
+				double area = layer.priQarea[qx] * layer.speQarea[sx * layer.numSpecific + specific1];
 				out += (o1 * o2.transpose()) * area;
 				++qloc;
 			}
@@ -568,30 +563,30 @@ SEXP pairwiseExpected(SEXP robj, SEXP Rwidth, SEXP Rpts, SEXP Ritems, SEXP Rtwot
 	} else if (specific1 != specific2) {
 		Eigen::VectorXd spo1(outcomes1);
 		Eigen::VectorXd spo2(outcomes2);
-		Eigen::VectorXd ptheta(quad.maxAbilities);
-		for (int qloc=0, qx=0; qx < quad.totalPrimaryPoints; ++qx) {
+		Eigen::VectorXd ptheta(quad.abilities());
+		for (int qloc=0, qx=0; qx < layer.totalPrimaryPoints; ++qx) {
 			o1.setZero();
 			o2.setZero();
-			for (int sx=0; sx < quad.quadGridSize; ++sx) {
-				double *where = quad.wherePrep.data() + qloc * quad.maxDims;
-				for (int dx=0; dx < quad.maxAbilities; dx++) {
-					ptheta[dx] = where[std::min(dx, quad.maxDims-1)];
+			for (int sx=0; sx < quad.gridSize; ++sx) {
+				layer.pointToGlobalAbscissa(qloc, abx, where);
+				for (int dx=0; dx < quad.abilities(); dx++) {
+					ptheta[dx] = where[std::min(dx, layer.maxDims-1)];
 				}
 				(*Glibrpf_model[id1].prob)(spec1, i1par, ptheta.data(), spo1.data());
 				(*Glibrpf_model[id2].prob)(spec2, i2par, ptheta.data(), spo2.data());
 				if (specific1 == -1) {
 					if (sx==0) o1 = spo1;
 				} else {
-					o1 += spo1 * quad.speQarea[sx * quad.numSpecific + specific1];
+					o1 += spo1 * layer.speQarea[sx * layer.numSpecific + specific1];
 				}
 				if (specific2 == -1) {
 					if (sx==0) o2 = spo2;
 				} else {
-					o2 += spo2 * quad.speQarea[sx * quad.numSpecific + specific2];
+					o2 += spo2 * layer.speQarea[sx * layer.numSpecific + specific2];
 				}
 				++qloc;
 			}
-			out += (o1 * o2.transpose()) * quad.priQarea[qx];
+			out += (o1 * o2.transpose()) * layer.priQarea[qx];
 		}
 	}
 
@@ -608,7 +603,7 @@ struct ManhattenCollapse {
 	double bestFit;
 	Eigen::DenseIndex bestR, bestC;
 	double minExpected;
-	
+
 	ManhattenCollapse(int rows, int cols, double *oMem, double *eMem)
 		: obs(oMem, rows, cols), expected(eMem, rows, cols),
 		  minExpected(KANG_CHEN_MIN_EXPECTED) {};
@@ -674,48 +669,34 @@ int ManhattenCollapse::run()
 	return collapsed;
 }
 
-SEXP collapse_wrapper(SEXP r_observed_orig, SEXP r_expected_orig, SEXP r_min)
+// [[Rcpp::export]]
+List collapse(const NumericMatrix &r_observed_orig,
+							const NumericMatrix &r_expected_orig, const NumericVector &r_min)
 {
-	ProtectAutoBalanceDoodad mpi;
-
-	if (!Rf_isMatrix(r_observed_orig)) Rf_error("observed must be a matrix");
-	if (!Rf_isMatrix(r_expected_orig)) Rf_error("expected must be a matrix");
-
-  int rows, cols;
-  getMatrixDims(r_expected_orig, &rows, &cols);
+  int rows = r_expected_orig.nrow();
+	int cols = r_expected_orig.ncol();
 
   {
-    int orows, ocols;
-    getMatrixDims(r_observed_orig, &orows, &ocols);
+    int orows = r_observed_orig.nrow();
+		int ocols = r_observed_orig.ncol();
     if (rows != orows || cols != ocols)
-	    Rf_error("Observed %dx%d and expected %dx%d matrices must have same dimensions",
+	    stop("Observed %dx%d and expected %dx%d matrices must have same dimensions",
 		     orows, ocols, rows, cols);
   }
 
-  SEXP r_observed, r_expected;
-  Rf_protect(r_observed = Rf_duplicate(r_observed_orig));
-  Rf_protect(r_expected = Rf_duplicate(r_expected_orig));
+	NumericMatrix r_observed = clone(r_observed_orig);
+	NumericMatrix r_expected = clone(r_expected_orig);
 
-  double *observed = REAL(r_observed);
-  double *expected = REAL(r_expected);
-
-  ManhattenCollapse mcollapse(rows, cols, observed, expected);
-  if (Rf_length(r_min)) mcollapse.setMinExpected(Rf_asReal(r_min));
+  ManhattenCollapse mcollapse(rows, cols, r_observed.begin(), r_expected.begin());
+  if (r_min.size()) mcollapse.setMinExpected(r_min[0]);
   int collapsed = mcollapse.run();
 
-  SEXP dimnames;
-  Rf_protect(dimnames = Rf_getAttrib(r_observed_orig, R_DimNamesSymbol));
-  Rf_setAttrib(r_observed, R_DimNamesSymbol, dimnames);
-  Rf_setAttrib(r_expected, R_DimNamesSymbol, dimnames);
-
-  MxRList out;
-  out.add("O", r_observed);
-  out.add("E", r_expected);
-  out.add("collapsed", Rf_ScalarInteger(collapsed));
-  return out.asR();
+	return List::create(_["O"] = r_observed,
+											_["E"] = r_expected,
+											_["collapsed"] = wrap(collapsed));
 }
 
-static int maxObservedSumScore(ifaGroup &grp, int *itemMask)
+static int maxObservedSumScore(ifaGroup &grp, const int *itemMask)
 {
 	int curMax = 0;
 	for (int ix=0; ix < int(grp.spec.size()); ++ix) {
@@ -727,7 +708,7 @@ static int maxObservedSumScore(ifaGroup &grp, int *itemMask)
 	return curMax;
 }
 
-static bool computeObservedSumScore(ifaGroup &grp, int *itemMask, int row, int *sumOut)
+static bool computeObservedSumScore(ifaGroup &grp, const int *itemMask, int row, int *sumOut)
 {
 	int sum = 0;
 	for (int ix=0; ix < int(grp.spec.size()); ++ix) {
@@ -740,27 +721,29 @@ static bool computeObservedSumScore(ifaGroup &grp, int *itemMask, int row, int *
 	return false;
 }
 
-SEXP fast_tableWithWeights(SEXP Ritem1, SEXP Ritem2, SEXP Rweight)
+// [[Rcpp::export]]
+NumericMatrix fast_tableWithWeights(IntegerVector Ritem1, IntegerVector Ritem2,
+													 RObject Rweight)
 {
-	ProtectAutoBalanceDoodad mpi;
+	int rows = Ritem1.size();
+	if (rows != Ritem2.size()) stop("Data are of different lengths");
 
-	int rows = Rf_length(Ritem1);
-	if (rows != Rf_length(Ritem2)) Rf_error("Data are of different lengths");
-
-	Eigen::Map<Eigen::ArrayXi> item1(INTEGER(Ritem1), rows);
-	Eigen::Map<Eigen::ArrayXi> item2(INTEGER(Ritem2), rows);
+	Eigen::Map<Eigen::ArrayXi> item1(Ritem1.begin(), rows);
+	Eigen::Map<Eigen::ArrayXi> item2(Ritem2.begin(), rows);
 	double *wvec = 0;
-	if (Rf_length(Rweight) == rows) wvec = REAL(Rweight);
+	if (!Rweight.isNULL()) {
+		NumericVector weight = as<NumericVector>(Rweight);
+		if (weight.size() != rows) stop("Weight vector must be length %d", rows);
+		wvec = weight.begin();
+	}
 
-	SEXP lev1, lev2;
-	Rf_protect(lev1 = Rf_getAttrib(Ritem1, R_LevelsSymbol));
-	Rf_protect(lev2 = Rf_getAttrib(Ritem2, R_LevelsSymbol));
-	int nlev1 = Rf_length(lev1);
-	int nlev2 = Rf_length(lev2);
+	CharacterVector lev1 = Ritem1.attr("levels");
+	CharacterVector lev2 = Ritem2.attr("levels");
+	int nlev1 = lev1.size();
+	int nlev2 = lev2.size();
 
-	SEXP Rdist;
-	Rf_protect(Rdist = Rf_allocMatrix(REALSXP, nlev1, nlev2));
-	Eigen::Map<Eigen::ArrayXXd> result(REAL(Rdist), nlev1, nlev2);
+	NumericMatrix Rdist(nlev1, nlev2);
+	Eigen::Map<Eigen::ArrayXXd> result(Rdist.begin(), nlev1, nlev2);
 	result.setZero();
 
 	for (int rx=0; rx < rows; ++rx) {
@@ -775,67 +758,65 @@ SEXP fast_tableWithWeights(SEXP Ritem1, SEXP Ritem2, SEXP Rweight)
 	return Rdist;
 }
 
-SEXP observedSumScore(SEXP Rgrp, SEXP Rmask)
+// [[Rcpp::export]]
+List observedSumScore_cpp(SEXP Rgrp, const LogicalVector &Rmask)
 {
-	ProtectAutoBalanceDoodad mpi;
+	ifaGroup grp(false);
+	grp.quad.setNumThreads(1);
+	grp.import(Rgrp);
+	if (grp.getNumUnique() == 0) stop("observedSumScore requires data");
+  grp.buildRowMult();
 
-	ifaGroup grp(1, false);
-	grp.import(Rgrp, true);
-	if (grp.getNumUnique() == 0) Rf_error("observedSumScore requires data");
-
-	if (Rf_length(Rmask) != int(grp.spec.size())) {
-		Rf_error("Mask must be of length %d not %d", int(grp.spec.size()), Rf_length(Rmask));
+	if (Rmask.size() != int(grp.spec.size())) {
+		stop("Mask must be of length %d not %d", int(grp.spec.size()), Rmask.size());
 	}
-	int *itemMask = LOGICAL(Rmask);
+	const int *itemMask = Rmask.begin();
 
 	int numScores = 1+maxObservedSumScore(grp, itemMask);
 
-	SEXP Rdist;
-	Rf_protect(Rdist = Rf_allocVector(REALSXP, numScores));
-	Eigen::Map<Eigen::ArrayXd> distOut(REAL(Rdist), numScores);
+	NumericVector Rdist(numScores);
+	Eigen::Map<Eigen::ArrayXd> distOut(Rdist.begin(), numScores);
 	distOut.setZero();
 
 	double rowsIncluded = 0;
 	for (int rx=0; rx < grp.getNumUnique(); ++rx) {
 		int ss;
 		if (computeObservedSumScore(grp, itemMask, rx, &ss)) continue;
-		double weight = grp.rowWeight? grp.rowWeight[rx] : 1;
+		double weight = grp.rowMult(rx);
 		distOut[ss] += weight;
 		rowsIncluded += weight;
 	}
 
-	MxRList out;
-	out.add("dist", Rdist);
-	out.add("n", Rf_ScalarReal(rowsIncluded));
-	return out.asR();
+	return List::create(_["dist"] = Rdist,
+											_["n"] = wrap(rowsIncluded));
 }
 
-SEXP itemOutcomeBySumScore(SEXP Rgrp, SEXP Rmask, SEXP Rinterest)
+// [[Rcpp::export]]
+List itemOutcomeBySumScore_cpp(SEXP Rgrp, const LogicalVector &Rmask, int interestPlusOne)
 {
-	ProtectAutoBalanceDoodad mpi;
+	ifaGroup grp(false);
+	grp.quad.setNumThreads(1);
+	grp.import(Rgrp);
+	if (grp.getNumUnique() == 0) stop("itemOutcomeBySumScore requires data");
+  grp.buildRowMult();
 
-	ifaGroup grp(1, false);
-	grp.import(Rgrp, true);
-	if (grp.getNumUnique() == 0) Rf_error("itemOutcomeBySumScore requires data");
-
-	if (Rf_length(Rmask) != int(grp.spec.size())) {
-		Rf_error("Mask must be of length %d not %d", int(grp.spec.size()), Rf_length(Rmask));
+	if (Rmask.size() != int(grp.spec.size())) {
+		stop("Mask must be of length %d not %d", int(grp.spec.size()), Rmask.size());
 	}
-	int *itemMask = LOGICAL(Rmask);
+	const int *itemMask = Rmask.begin();
 
 	int numScores = 1+maxObservedSumScore(grp, itemMask);
 
-	int interest = Rf_asInteger(Rinterest) - 1;
+	int interest = interestPlusOne - 1;
 	if (interest < 0 || interest >= int(grp.spec.size())) {
-		Rf_error("Item of interest %d must be between 1 and %d", 1+interest, int(grp.spec.size()));
+		stop("Item of interest %d must be between 1 and %d", 1+interest, int(grp.spec.size()));
 	}
 
 	const double *spec = grp.spec[interest];
 	int outcomes = spec[RPF_ISpecOutcomes];
 
-	SEXP r_ans;
-	Rf_protect(r_ans = Rf_allocMatrix(REALSXP, numScores, outcomes));
-	Eigen::Map<Eigen::ArrayXXd> out(REAL(r_ans), numScores, outcomes);
+	NumericMatrix r_ans(numScores, outcomes);
+	Eigen::Map<Eigen::ArrayXXd> out(r_ans.begin(), numScores, outcomes);
 	out.setZero();
 
 	const int *iresp = grp.dataColumn(interest);
@@ -846,18 +827,17 @@ SEXP itemOutcomeBySumScore(SEXP Rgrp, SEXP Rmask, SEXP Rinterest)
 		if (pick == NA_INTEGER) continue;
 		int ss;
 		if (computeObservedSumScore(grp, itemMask, rx, &ss)) continue;
-		double weight = grp.rowWeight? grp.rowWeight[rx] : 1;
+		double weight = grp.rowMult(rx);
 		out(ss, pick-1) += weight;
 		rowsIncluded += weight;
 	}
 
-	MxRList lout;
-	lout.add("table", r_ans);
-	lout.add("n", Rf_ScalarReal(rowsIncluded));
-	return lout.asR();
+	return List::create(_["table"] = r_ans,
+											_["n"] = wrap(rowsIncluded));
 }
 
-static double table_concordance(double *mat, int rows, int cols, int ii, int jj)
+static double table_concordance(const NumericMatrix &mat,
+																int rows, int cols, int ii, int jj)
 {
   double sum=0;
   for (int hh=ii+1; hh < rows; ++hh) {
@@ -868,7 +848,8 @@ static double table_concordance(double *mat, int rows, int cols, int ii, int jj)
   return sum;
 }
 
-static double table_discordance(double *mat, int rows, int cols, int ii, int jj)
+static double table_discordance(const NumericMatrix &mat,
+																int rows, int cols, int ii, int jj)
 {
   double sum=0;
   for (int hh=ii+1; hh < rows; ++hh) {
@@ -879,15 +860,12 @@ static double table_discordance(double *mat, int rows, int cols, int ii, int jj)
   return sum;
 }
 
-/* See Agresti (1990, p. 22) */
-SEXP gamma_cor(SEXP r_mat)
+// See Agresti (1990, p. 22)
+// [[Rcpp::export]]
+double gamma_cor(const NumericMatrix &mat)
 {
-  int rows;
-  int cols;
-  getMatrixDims(r_mat, &rows, &cols);
-  SEXP realmat;
-  Rf_protect(realmat = Rf_coerceVector(r_mat, REALSXP));
-  double *mat = REAL(realmat);
+	int rows = mat.nrow();
+	int cols = mat.ncol();
 
   double concord = 0;
   for (int ii=0; ii < rows-1; ++ii) {
@@ -903,10 +881,8 @@ SEXP gamma_cor(SEXP r_mat)
     }
   }
 
-  UNPROTECT(1);
-
   double gamma = (concord - discord) / (concord + discord);
-  return Rf_ScalarReal(gamma);
+	return gamma;
 }
 
 template <typename T1, typename T2, typename T3>
@@ -926,35 +902,30 @@ static inline double crosstabMS(Eigen::ArrayBase<T1> &observed,
 	}
 }
 
-SEXP crosstabTest(SEXP Robserved, SEXP Rexpected, SEXP Rtrials)
+// [[Rcpp::export]]
+double crosstabTest_cpp(const NumericMatrix &Robserved,
+												const NumericMatrix &Rexpected, int trials)
 {
-	int rows, cols;
-	getMatrixDims(Robserved, &rows, &cols);
+	int rows = Robserved.nrow();
+	int cols = Robserved.ncol();
 	{
-		int erows, ecols;
-		getMatrixDims(Rexpected, &erows, &ecols);
+		int erows = Rexpected.nrow();
+		int ecols = Rexpected.ncol();
 		if (rows != erows || cols != ecols) {
-			Rf_error("observed and expected matrices must be the same dimension");
+			stop("observed and expected matrices must be the same dimension");
 		}
 	}
 
 	Eigen::ArrayXXd observed(rows, cols);
-	if (Rf_isInteger(Robserved)) {
-		Eigen::Map<Eigen::ArrayXXi > tmp(INTEGER(Robserved), rows, cols);
-		observed = tmp.cast<double>();
-	} else if (Rf_isReal(Robserved)) {
-		memcpy(observed.data(), REAL(Robserved), sizeof(double) * rows * cols);
-	} else {
-		Rf_error("observed is an unknown type");
-	}
+	memcpy(observed.data(), Robserved.begin(), sizeof(double) * rows * cols);
 
 	Eigen::ArrayXXd expected(rows, cols);
-	memcpy(expected.data(), REAL(Rexpected), sizeof(double) * rows * cols);
+	memcpy(expected.data(), Rexpected.begin(), sizeof(double) * rows * cols);
 
 	Eigen::ArrayXd rowSum(rows);
 	rowSum = observed.rowwise().sum();
 	if (((expected.rowwise().sum() - rowSum).abs() > 1e-6).any()) {
-		Rf_error("observed and expected row sums must match");
+		stop("observed and expected row sums must match");
 	}
 
 	expected.colwise() /= rowSum;
@@ -974,7 +945,7 @@ SEXP crosstabTest(SEXP Robserved, SEXP Rexpected, SEXP Rtrials)
 	Eigen::ArrayXXi Eprob(rows, cols);
 	Eprob = (expected * RAND_MAX).cast<int>();
 
-	int trials = Rf_asInteger(Rtrials); // SE = 1/(.05 * .95 * sqrt(trials))
+	// SE = 1/(.05 * .95 * sqrt(trials))
 	Eigen::ArrayXd mcMS(trials);
 	for (int tx=0; tx < trials; ++tx) {
 		Eigen::ArrayXXd draw(rows, cols);
@@ -996,5 +967,5 @@ SEXP crosstabTest(SEXP Robserved, SEXP Rexpected, SEXP Rtrials)
 		mcMS(tx) = crosstabMS(draw, expected, simSizeD);
 	}
 	Eigen::DenseIndex cnt = (mcMS >= refMS).count();
-	return Rf_ScalarReal(double(cnt) / trials);
+	return double(cnt) / trials;
 }

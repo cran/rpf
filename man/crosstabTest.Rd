@@ -14,5 +14,6 @@ crosstabTest(ob, ex, trials)
 \item{trials}{number of Monte-Carlo trials}
 }
 \description{
+\lifecycle{experimental}
 This is for developers.
 }

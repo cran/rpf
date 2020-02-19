@@ -10,9 +10,9 @@ static int elementEqualsDataframe(SEXP column, int offset1, int offset2) {
 		return(REAL(column)[offset1] == REAL(column)[offset2]);
 	case LGLSXP:
 	case INTSXP:
-		return(INTEGER(column)[offset1] == INTEGER(column)[offset2]);		
+		return(INTEGER(column)[offset1] == INTEGER(column)[offset2]);
 	}
-	return(0);
+	stop("elementEqualsDataframe: unknown type %d", TYPEOF(column)); //nocov
 }
 
 static int testRowDataframe(SEXP data, int numrow, int numcol, int i, int *row, int base) {
@@ -79,27 +79,13 @@ static SEXP findIdenticalDataFrame(SEXP data, SEXP missing, SEXP defvars,
 	return retval;
 }
 
-static SEXP findIdenticalRowsData2(SEXP data, SEXP missing, SEXP defvars,
-			   SEXP skipMissingness, SEXP skipDefvars) {
-	if (Rf_isMatrix(data)) {
-		Rf_error("Only data.frame is implemented");
-	} else {
-		return(findIdenticalDataFrame(data, missing, defvars, skipMissingness, skipDefvars));
-	}
-}
-
+// [[Rcpp::export]]
 SEXP findIdenticalRowsData(SEXP data, SEXP missing, SEXP defvars,
 			   SEXP skipMissingness, SEXP skipDefvars)
 {
-	ProtectAutoBalanceDoodad protectManager;
-
-	try {
-		return findIdenticalRowsData2(data, missing, defvars,
-					      skipMissingness, skipDefvars);
-	} catch( std::exception& __ex__ ) {
-		exception_to_try_Rf_error( __ex__ );
-	} catch(...) {
-		string_to_try_Rf_error( "c++ exception (unknown reason)" );
+	if (Rf_isMatrix(data)) {
+		stop("Only data.frame is implemented");
+	} else {
+		return(findIdenticalDataFrame(data, missing, defvars, skipMissingness, skipDefvars));
 	}
-	return 0; // not reached
 }

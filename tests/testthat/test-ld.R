@@ -3,7 +3,21 @@ library(testthat)
 library(rpf)
 library(mvtnorm)
 
+options(mc.cores=1L) #otherwise not picked up by covr
+
 context("chen & thissen 1997")
+
+test_that("collapseCategoricalCells", {
+  O = matrix(c(7,31,42,20,0), 1,5,
+             dimnames=list('a',letters[1:5]))
+  E = matrix(c(3,39,50,8,0), 1,5,
+             dimnames=list('a',letters[1:5]))
+  got <- collapseCategoricalCells(O,E,9)
+  expect_equal(O['a','a'],7)
+  expect_true(is.na(got$O['a','a']))
+  expect_equal(got$collapsed, 2)
+  expect_equal(E[,letters[2:3]], got$E[,letters[2:3]])
+})
 
 mxSimplify2Array <- function(x, higher=FALSE) {
 	if (higher) {
@@ -62,14 +76,16 @@ test_that("ct1997 2tier", {
   gen.param[c('a2','a3'), 4:5] <- 0
   colnames(gen.param) <- paste("i", 1:ncol(gen.param), sep="")
 	resp <- rpf.sample(500, spec, gen.param)
-	grp <- list(spec=spec, param=gen.param, mean=runif(3, 0, 1), cov=diag(runif(3,1,2)), data=resp)
-	slow <- ChenThissen1997(grp, qpoints=13L, qwidth=4, .twotier=FALSE)
-	fast <- ChenThissen1997(grp, qpoints=13L, qwidth=4, .twotier=TRUE)
+	grp <- list(spec=spec, param=gen.param, mean=runif(3, 0, 1),
+	            cov=diag(runif(3,1,2)), data=resp,
+	            qpoints=13L, qwidth=4)
+	slow <- ChenThissen1997(grp, .twotier=FALSE)
+	fast <- ChenThissen1997(grp, .twotier=TRUE)
   expect_equal(slow$raw[!is.na(slow$raw)],
                fast$raw[!is.na(fast$raw)], tolerance=.001)
   
   grp$data <- rpf.sample(200, spec, gen.param, mcar=.2)
-  fast <- ChenThissen1997(grp, qpoints=13L, qwidth=4)
+  fast <- ChenThissen1997(grp)
   got <- fast$pval[,'i1']
   names(got) <- NULL
 #  cat(deparse(round(fast$pval[,'i1'],2)))

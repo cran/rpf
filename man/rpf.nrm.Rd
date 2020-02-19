@@ -51,3 +51,13 @@ Nominal Categories Item Response Model. In M. L. Nering &
 R. Ostini (Eds.), \emph{Handbook of Polytomous Item Response
 Theory Models} (pp. 43--75). Routledge.
 }
+\seealso{
+Other response model: 
+\code{\link{rpf.drm}()},
+\code{\link{rpf.gpcmp}()},
+\code{\link{rpf.grmp}()},
+\code{\link{rpf.grm}()},
+\code{\link{rpf.lmp}()},
+\code{\link{rpf.mcm}()}
+}
+\concept{response model}

@@ -11,7 +11,7 @@ toFactorThreshold(intercept, slope, ogive = rpf.ogive)
 
 \item{slope}{a matrix with items in the columns and slopes in the rows}
 
-\item{ogive}{the ogive constant (default rpf.ogive)}
+\item{ogive}{the ogive constant (default \link{rpf.ogive})}
 }
 \value{
 a factor threshold matrix with items in the columns and factor thresholds in the rows
@@ -19,3 +19,10 @@ a factor threshold matrix with items in the columns and factor thresholds in the
 \description{
 Convert response function intercepts to factor thresholds
 }
+\seealso{
+Other factor model equivalence: 
+\code{\link{fromFactorLoading}()},
+\code{\link{fromFactorThreshold}()},
+\code{\link{toFactorLoading}()}
+}
+\concept{factor model equivalence}

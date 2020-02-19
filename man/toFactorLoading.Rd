@@ -9,7 +9,7 @@ toFactorLoading(slope, ogive = rpf.ogive)
 \arguments{
 \item{slope}{a matrix with items in the columns and slopes in the rows}
 
-\item{ogive}{the ogive constant (default rpf.ogive)}
+\item{ogive}{the ogive constant (default \link{rpf.ogive})}
 }
 \value{
 a factor loading matrix with items in the rows and factors in the columns
@@ -22,5 +22,9 @@ transformation is applied to the slope matrix,
 \deqn{\frac{\mathrm{slope}}{\left[ 1 + \mathrm{rowSums}(\mathrm{slope}^2) \right]^\frac{1}{2}}}
 }
 \seealso{
-\link{rpf.ogive}
+Other factor model equivalence: 
+\code{\link{fromFactorLoading}()},
+\code{\link{fromFactorThreshold}()},
+\code{\link{toFactorThreshold}()}
 }
+\concept{factor model equivalence}

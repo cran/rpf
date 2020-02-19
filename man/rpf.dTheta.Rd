@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.R
 \name{rpf.dTheta}
 \alias{rpf.dTheta}
-\alias{rpf_dTheta_wrapper}
+\alias{_rpf_dTheta}
 \alias{rpf.dTheta,rpf.base,numeric,numeric,numeric-method}
 \alias{rpf.dTheta,rpf.base,numeric,matrix,numeric-method}
 \title{Item derivatives with respect to the location in the latent space}
@@ -16,7 +16,7 @@ rpf.dTheta(m, param, where, dir)
 
 \item{where}{location in the latent distribution}
 
-\item{dir}{if more than 1 factor, a basis vector]}
+\item{dir}{if more than 1 factor, a basis vector}
 }
 \description{
 Evaluate the partial derivatives of the response probability with

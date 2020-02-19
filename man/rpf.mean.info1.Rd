@@ -14,5 +14,5 @@ rpf.mean.info1(spec, iparam, grain = 0.1)
 \item{grain}{the step size for numerical integration (optional)}
 }
 \description{
-WARNING: This function is experimental and may disappear.
+\lifecycle{experimental}
 }

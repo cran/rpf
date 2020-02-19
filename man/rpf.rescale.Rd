@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.R
 \name{rpf.rescale}
 \alias{rpf.rescale}
-\alias{rpf_rescale_wrapper}
+\alias{_rpf_rescale}
 \alias{rpf.rescale,rpf.base,numeric,numeric,matrix-method}
 \title{Rescale item parameters}
 \usage{
