@@ -1,8 +1,8 @@
 Type: Package
 Package: rpf
 Title: Response Probability Functions
-Version: 1.0.2
-Date: 2020-02-18
+Version: 1.0.3
+Date: 2020-02-21
 Authors@R: 
     c(person(given = "Joshua",
              family = "Pritikin",
@@ -54,7 +54,7 @@ Collate: 'init.R' 'classes.R' 'fit.R' 'drm.R' 'nrm.R' 'mcm.R' 'grm.R'
         'kct.R' 'openmx.R' 'flexmirt.R' 'util.R' 'lmp.R' 'grmp.R'
         'gpcmp.R' 'RcppExports.R'
 NeedsCompilation: yes
-Packaged: 2020-02-18 12:14:57 UTC; joshua
+Packaged: 2020-02-21 10:36:46 UTC; joshua
 Author: Joshua Pritikin [cre, aut],
   Jonathan Weeks [ctb],
   Li Cai [ctb],
@@ -63,4 +63,4 @@ Author: Joshua Pritikin [cre, aut],
   Michael D. Hunter [ctb],
   Carl F. Falk [ctb]
 Repository: CRAN
-Date/Publication: 2020-02-19 17:50:02 UTC
+Date/Publication: 2020-02-23 18:10:02 UTC

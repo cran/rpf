@@ -1,4 +1,4 @@
-5c5e74ad2ea4962a8f60c9a798111c08 *DESCRIPTION
+f073c1d6f9c5cd908b63ced54f72b953 *DESCRIPTION
 7c176624262c08857b0f23b12daf9892 *NAMESPACE
 ca6770ad1a93693af31128bee7e3d2c1 *R/LSAT.R
 aae7c180433711033e77dd3a5d702ef7 *R/RcppExports.R
@@ -21,7 +21,7 @@ d0a86bbfd14a94a32bb6413674cb8ee5 *R/init.R
 ed6e7a091b065494656a321335cf7785 *R/science.R
 7fb7bfa932c098a308e3e689da773557 *R/util.R
 acaca5fdbe1b1ffef5fd4dd02f2389b1 *README.md
-232f6a9a9d1d91b77f9c91a8e2e43bac *build/rpf.pdf
+9064e22d937bba406dc8d6a97be06801 *build/rpf.pdf
 a231bb7381a944c214d563123c55b2d8 *build/vignette.rds
 a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 30c37ee02040314730b304566dddae92 *data/LSAT6.RData
@@ -33,7 +33,7 @@ a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 6e2eb2e14a4cc4144551d04367ac5db0 *inst/doc/customitem.html
 12ad79afa3b235be9faeab18b4f51a31 *inst/doc/diagnostics.R
 70a40673d87bb843d945a1549869795c *inst/doc/diagnostics.Rmd
-d5b375c46cccbc42f4ddf1f17d560e09 *inst/doc/diagnostics.html
+fea16b7022433d885f2451540bb91af2 *inst/doc/diagnostics.html
 6ac4e8254384c0768af6b22cfa41e0d3 *inst/doc/flexmirt-plots.R
 964234997448aaae1d8010ed3eaa4eec *inst/doc/flexmirt-plots.Rmd
 d3dcb0f9943bb3b1e139261d6aecf2c2 *inst/doc/flexmirt-plots.html
@@ -122,13 +122,13 @@ d3e932075124fc294916b5cf2bfe0251 *man/tabulateRows.Rd
 fe9cacb0a33776a9f7fa549d26694050 *man/toFactorLoading.Rd
 b5aa9bb0c56a2ec4d7ab726f10c7e825 *man/toFactorThreshold.Rd
 0a341ee69a5594e5ea8ff520f6830f1d *man/write.flexmirt.Rd
-62dae076af7cba2f31b149ed910546b4 *src/Makevars
+83bacbd22f9f854f0a49206f8dad9127 *src/Makevars
 4ac54128717318539ad930afa0db9d12 *src/Makevars.win
 177549605432e69c237900c74555d93d *src/RcppExports.cpp
-e637c92f3aac5c498a746bcdf7bfd835 *src/ba81quad.cpp
+2a1665d53a17e4ea691ad0eb885494fc *src/ba81quad.cpp
 15e869f131ab6c8ecef4315531706fd8 *src/ba81quad.h
 ef8fd05aaf54baaa5e7e8745870617d8 *src/dataframe.cpp
-fe29d020bc1d4769c40c77f98a0c68ac *src/diagnose.cpp
+6f8bc18f374fbed8a4b6e4c9941452f7 *src/diagnose.cpp
 12005570813d0f4ea2f7cd6af42b431a *src/dmvnorm.cpp
 b3683e9c3a86c42419eb37cfa943b263 *src/dmvnorm.h
 4e5f3279e9381df3ea84e9fbff42a481 *src/eap.cpp
@@ -160,7 +160,7 @@ be588025d8030432ba09fa15cd63d029 *tools/check
 4de50d56bb39e41a1e189c3aceb5e07b *tools/install
 e9cd7f130cac5698888f8e5700c9e250 *tools/plot.gradient.R
 03d9a86732eb341307c63d6f5d44c48e *tools/rcpp
-6acdac522503f27fbb2e860cd2fa7464 *tools/rox
+37e74d553971c9fbc15c0e7539d5406a *tools/rox
 23176767b28fd781a63cedd301a854bc *tools/test
 40fdad30b0a563cee3b89097488a1826 *tools/test-dLL.R
 944a650917364fe329adb3e34a5f88c3 *tools/test-ptw2011.R
