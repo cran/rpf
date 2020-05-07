@@ -62,10 +62,10 @@ EAP scores should be produced by \link{EAPscores}.
 }
 
 \references{
-Li, Z., & Cai, L. (2012, July). Summed score likelihood based indices for testing
-latent variable distribution fit in Item Response Theory. Paper presented at
-the annual International Meeting of the Psychometric Society, Lincoln,
-NE. Retrieved from http://www.cse.ucla.edu/downloads/files/SD2-final-4.pdf
+Li, Z., & Cai, L. (2018). Summed Score Likelihood-Based Indices for
+Testing Latent Variable Distribution Fit in
+Item Response Theory. \emph{Educational and
+Psychological Measurement, 78}(5), 857-886.
 }
 \seealso{
 Other diagnostic: 

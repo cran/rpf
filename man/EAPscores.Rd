@@ -2,7 +2,7 @@
 % Please edit documentation in R/util.R
 \name{EAPscores}
 \alias{EAPscores}
-\title{Compute EAP scores}
+\title{Compute Expected A Posteriori (EAP) scores}
 \usage{
 EAPscores(grp, ..., compressed = FALSE)
 }
