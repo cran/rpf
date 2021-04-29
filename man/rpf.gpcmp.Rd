@@ -64,7 +64,7 @@ p<-rpf.prob(spec, c(1.02,3.48,2.5,-.25,-1.64,.89,-8.7,-.74,-8.99),theta)
 Falk, C. F., & Cai, L. (2016). Maximum marginal likelihood
 estimation of a monotonic polynomial generalized partial credit model with
 applications to multiple group analysis. \emph{Psychometrika, 81}, 434-460.
-\url{http://dx.doi.org/10.1007/s11336-014-9428-7}
+\doi{10.1007/s11336-014-9428-7}
 
 Muraki, E. (1992). A generalized partial credit model: Application of an EM algorithm. \emph{Applied Psychological Measurement, 16,} 159–176.
 }
