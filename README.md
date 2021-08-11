@@ -3,7 +3,7 @@ Title:       rpf
 # Why use RPF?
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/jpritikin/rpf.svg?branch=master)](https://travis-ci.org/jpritikin/rpf)
+[![Travis build status](https://travis-ci.com/jpritikin/rpf.svg?branch=master)](https://travis-ci.com/github/jpritikin/rpf)
 [![Codecov test coverage](https://codecov.io/gh/jpritikin/rpf/branch/master/graph/badge.svg)](https://codecov.io/gh/jpritikin/rpf?branch=master)
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/rpf?color=blue)](https://cran.r-project.org/package=rpf)
 [![Monthly Downloads](https://cranlogs.r-pkg.org/badges/rpf)](https://cranlogs.r-pkg.org/badges/rpf)
