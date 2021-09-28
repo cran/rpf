@@ -1,4 +1,4 @@
-986d4e98e129560974493e66f4dd0fb9 *DESCRIPTION
+024c029278841770a5190f8b26ed9fca *DESCRIPTION
 7c176624262c08857b0f23b12daf9892 *NAMESPACE
 ca6770ad1a93693af31128bee7e3d2c1 *R/LSAT.R
 aae7c180433711033e77dd3a5d702ef7 *R/RcppExports.R
@@ -20,10 +20,10 @@ d0a86bbfd14a94a32bb6413674cb8ee5 *R/init.R
 68d4142a2f545b9965622a1004a79075 *R/sample.R
 ed6e7a091b065494656a321335cf7785 *R/science.R
 cdd4695b5c784a1bb4fb55ec19a37437 *R/util.R
-9edf9165b77ef81df42bbee3c41de382 *README.md
-9928299f891598e33dc9e5e357052242 *build/partial.rdb
-c82efaab26e3306ae4963d9fb6261d9e *build/rpf.pdf
-468c2da445c67f404736446c6183e3d1 *build/vignette.rds
+c1039b4a7d180ad8321032b748ea057b *README.md
+3b76390ba8b665a179507ecd8e4a077d *build/partial.rdb
+5c4ec7043bb241ac081384154c1a8261 *build/rpf.pdf
+27b5333581b4eda49f5706d569765266 *build/vignette.rds
 a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 30c37ee02040314730b304566dddae92 *data/LSAT6.RData
 8d75717ec8898694488ae30f56a515e7 *data/LSAT7.RData
@@ -35,7 +35,7 @@ a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 f6ba02d0dea926e2acb187cdb9ffc400 *inst/doc/customitem.html
 12ad79afa3b235be9faeab18b4f51a31 *inst/doc/diagnostics.R
 70a40673d87bb843d945a1549869795c *inst/doc/diagnostics.Rmd
-0c13a3a9dfdae1556b905334a90c60a7 *inst/doc/diagnostics.html
+25e43144ddf2db7fc23cbdd6c2e8eb84 *inst/doc/diagnostics.html
 6ac4e8254384c0768af6b22cfa41e0d3 *inst/doc/flexmirt-plots.R
 964234997448aaae1d8010ed3eaa4eec *inst/doc/flexmirt-plots.Rmd
 211ede11e28c9fdb0fc5a6d7183d38d7 *inst/doc/flexmirt-plots.html
@@ -124,7 +124,7 @@ d3e932075124fc294916b5cf2bfe0251 *man/tabulateRows.Rd
 fe9cacb0a33776a9f7fa549d26694050 *man/toFactorLoading.Rd
 b5aa9bb0c56a2ec4d7ab726f10c7e825 *man/toFactorThreshold.Rd
 0a341ee69a5594e5ea8ff520f6830f1d *man/write.flexmirt.Rd
-2b54405e95003928178f46ad26696c37 *src/Makevars
+89bb9d3f68b8ab7a9861aaa6d2d2d8d4 *src/Makevars
 1ff981daa211ed023bbaae55a4345305 *src/Makevars.win
 177549605432e69c237900c74555d93d *src/RcppExports.cpp
 e08302deff67aad721414d1d705c153e *src/ba81quad.cpp
@@ -135,7 +135,7 @@ ef8fd05aaf54baaa5e7e8745870617d8 *src/dataframe.cpp
 b3683e9c3a86c42419eb37cfa943b263 *src/dmvnorm.h
 4e5f3279e9381df3ea84e9fbff42a481 *src/eap.cpp
 a06cd9252184691c616cd2d6660d3f4a *src/glue.cpp
-92abf38bf8d3b621d49f4c1d884d7dce *src/libifa-rpf.cpp
+fe9d550edb1a03b923928d27c04b24c2 *src/libifa-rpf.cpp
 ec745cc5086f971166a4632819ef55c1 *src/m2.cpp
 b9a061506c4a533038391127dac930b2 *src/rpf.h
 777106c46ef7f8a4752d31c6db3d5162 *tests/testthat.R
@@ -162,7 +162,7 @@ be588025d8030432ba09fa15cd63d029 *tools/check
 4de50d56bb39e41a1e189c3aceb5e07b *tools/install
 e9cd7f130cac5698888f8e5700c9e250 *tools/plot.gradient.R
 03d9a86732eb341307c63d6f5d44c48e *tools/rcpp
-cc92361f3630be18a81ec22e4343929b *tools/rox
+215d991f30c2f1d0ff56957116431999 *tools/rox
 23176767b28fd781a63cedd301a854bc *tools/test
 40fdad30b0a563cee3b89097488a1826 *tools/test-dLL.R
 944a650917364fe329adb3e34a5f88c3 *tools/test-ptw2011.R
