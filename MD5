@@ -1,4 +1,4 @@
-024c029278841770a5190f8b26ed9fca *DESCRIPTION
+d04d8371b12308252e3cc01442f1c0c0 *DESCRIPTION
 7c176624262c08857b0f23b12daf9892 *NAMESPACE
 ca6770ad1a93693af31128bee7e3d2c1 *R/LSAT.R
 aae7c180433711033e77dd3a5d702ef7 *R/RcppExports.R
@@ -20,9 +20,9 @@ d0a86bbfd14a94a32bb6413674cb8ee5 *R/init.R
 68d4142a2f545b9965622a1004a79075 *R/sample.R
 ed6e7a091b065494656a321335cf7785 *R/science.R
 cdd4695b5c784a1bb4fb55ec19a37437 *R/util.R
-c1039b4a7d180ad8321032b748ea057b *README.md
-3b76390ba8b665a179507ecd8e4a077d *build/partial.rdb
-5c4ec7043bb241ac081384154c1a8261 *build/rpf.pdf
+2facccd112bdaa405d15ab4cd8dfce59 *README.md
+c1c52c6b87efe69038ee5e825cc15d46 *build/partial.rdb
+974675b9edf8400b56e3fc89729cde63 *build/rpf.pdf
 27b5333581b4eda49f5706d569765266 *build/vignette.rds
 a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 30c37ee02040314730b304566dddae92 *data/LSAT6.RData
@@ -35,7 +35,7 @@ a1572b0a53bfa8b3ec1388fc110764e6 *cleanup
 f6ba02d0dea926e2acb187cdb9ffc400 *inst/doc/customitem.html
 12ad79afa3b235be9faeab18b4f51a31 *inst/doc/diagnostics.R
 70a40673d87bb843d945a1549869795c *inst/doc/diagnostics.Rmd
-25e43144ddf2db7fc23cbdd6c2e8eb84 *inst/doc/diagnostics.html
+b38965ee58f62e5b02ad3dffe3d09569 *inst/doc/diagnostics.html
 6ac4e8254384c0768af6b22cfa41e0d3 *inst/doc/flexmirt-plots.R
 964234997448aaae1d8010ed3eaa4eec *inst/doc/flexmirt-plots.Rmd
 211ede11e28c9fdb0fc5a6d7183d38d7 *inst/doc/flexmirt-plots.html
@@ -128,7 +128,7 @@ b5aa9bb0c56a2ec4d7ab726f10c7e825 *man/toFactorThreshold.Rd
 1ff981daa211ed023bbaae55a4345305 *src/Makevars.win
 177549605432e69c237900c74555d93d *src/RcppExports.cpp
 e08302deff67aad721414d1d705c153e *src/ba81quad.cpp
-15e869f131ab6c8ecef4315531706fd8 *src/ba81quad.h
+e5b518fc4cbe995c46d468a8416b0010 *src/ba81quad.h
 ef8fd05aaf54baaa5e7e8745870617d8 *src/dataframe.cpp
 6f8bc18f374fbed8a4b6e4c9941452f7 *src/diagnose.cpp
 12005570813d0f4ea2f7cd6af42b431a *src/dmvnorm.cpp
@@ -162,7 +162,7 @@ be588025d8030432ba09fa15cd63d029 *tools/check
 4de50d56bb39e41a1e189c3aceb5e07b *tools/install
 e9cd7f130cac5698888f8e5700c9e250 *tools/plot.gradient.R
 03d9a86732eb341307c63d6f5d44c48e *tools/rcpp
-215d991f30c2f1d0ff56957116431999 *tools/rox
+eb92ef96a263837da12fed2b9502e6b9 *tools/rox
 23176767b28fd781a63cedd301a854bc *tools/test
 40fdad30b0a563cee3b89097488a1826 *tools/test-dLL.R
 944a650917364fe329adb3e34a5f88c3 *tools/test-ptw2011.R
