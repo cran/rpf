@@ -221,7 +221,7 @@ write.flexmirt <- function(groups, file=NULL, fileEncoding="") {
       name <- names(grp$spec)[ix]
       iparam <- grp$param[,ix]
       if (is.null(name)) name <- paste("i",ix,sep="")
-      if (class(spec) == "rpf.mdim.drm") {
+      if (inherits(spec, "rpf.mdim.drm")) {
         if (iparam[4] < 1) warnings("Nonzero upper bound ignored")
         if (iparam[3] == 0) {
           warnings("Guessing set to 0; using Graded(2) instead")
@@ -232,11 +232,11 @@ write.flexmirt <- function(groups, file=NULL, fileEncoding="") {
           cat(paste(1, name, gx, nfact, 1, 2, logitg, iparam[2], iparam[1], sep="\t"),
               file=file, fill=TRUE)
         }
-      } else if (class(spec) == "rpf.mdim.grm") {
+      } else if (inherits(spec, "rpf.mdim.grm")) {
         if (spec@outcomes > 2) stop("Not implemented")
         cat(c(1, name, gx, nfact, 2, spec@outcomes, iparam[(nfact+1):length(iparam)],
                   iparam[1:nfact]), sep="\t", file=file, fill=TRUE)
-      } else if (class(spec) == "rpf.mdim.nrm") {
+      } else if (inherits(spec, "rpf.mdim.nrm")) {
         T.a <- serialize.T(spec, 'a', getT(spec, 0))
         T.c <- serialize.T(spec, 'c', getT(spec, 1))
         cat(paste(c(1, name, gx, nfact, 3, spec@outcomes, T.a,

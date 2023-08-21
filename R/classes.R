@@ -37,6 +37,7 @@
 ##' not the actual plot functions).
 ##'
 ##' @docType package
+##' @aliases rpf-package
 ##' @rdname rpf.introduction
 ##' @name An introduction
 ##' @references
