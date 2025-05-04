@@ -1,4 +1,4 @@
-## ---- message=FALSE-----------------------------------------------------------
+## ----message=FALSE------------------------------------------------------------
 library(rpf)
 
 lmp.item<-rpf.lmp(q=2) # create item w/ 5th order polynomial

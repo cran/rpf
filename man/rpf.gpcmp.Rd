@@ -71,8 +71,8 @@ Muraki, E. (1992). A generalized partial credit model: Application of an EM algo
 \seealso{
 Other response model: 
 \code{\link{rpf.drm}()},
-\code{\link{rpf.grmp}()},
 \code{\link{rpf.grm}()},
+\code{\link{rpf.grmp}()},
 \code{\link{rpf.lmp}()},
 \code{\link{rpf.mcm}()},
 \code{\link{rpf.nrm}()}

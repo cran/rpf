@@ -70,8 +70,8 @@ Psychological Measurement, 78}(5), 857-886.
 \seealso{
 Other diagnostic: 
 \code{\link{ChenThissen1997}()},
-\code{\link{SitemFit1}()},
 \code{\link{SitemFit}()},
+\code{\link{SitemFit1}()},
 \code{\link{multinomialFit}()},
 \code{\link{rpf.1dim.fit}()}
 }

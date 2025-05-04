@@ -2,6 +2,7 @@
 % Please edit documentation in R/classes.R
 \docType{package}
 \name{An introduction}
+\alias{rpf}
 \alias{An introduction}
 \alias{rpf-package}
 \title{rpf - Response Probability Functions}
@@ -53,4 +54,18 @@ item response models. \emph{Psychometrika 51}(4), 567-577.
 }
 \seealso{
 See \code{\link{rpf.rparam}} to create item parameters.
+}
+\author{
+\strong{Maintainer}: Joshua Pritikin \email{jpritikin@pobox.com}
+
+Other contributors:
+\itemize{
+  \item Jonathan Weeks \email{weeksjp@gmail.com} [contributor]
+  \item Li Cai [contributor]
+  \item Carrie Houts [contributor]
+  \item Phil Chalmers \email{rphilip.chalmers@gmail.com} [contributor]
+  \item Michael D. Hunter [contributor]
+  \item Carl F. Falk \email{falkcarl@msu.edu} [contributor]
+}
+
 }

@@ -152,8 +152,8 @@ Analysis.} Chicago: Mesa Press.
 \seealso{
 Other diagnostic: 
 \code{\link{ChenThissen1997}()},
-\code{\link{SitemFit1}()},
 \code{\link{SitemFit}()},
+\code{\link{SitemFit1}()},
 \code{\link{multinomialFit}()},
 \code{\link{sumScoreEAPTest}()}
 }

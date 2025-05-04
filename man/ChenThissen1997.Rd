@@ -118,8 +118,8 @@ Educational measurement, 24}(3), 185--201.
 \href{https://github.com/jpritikin/ifaTools}{ifaTools}
 
 Other diagnostic: 
-\code{\link{SitemFit1}()},
 \code{\link{SitemFit}()},
+\code{\link{SitemFit1}()},
 \code{\link{multinomialFit}()},
 \code{\link{rpf.1dim.fit}()},
 \code{\link{sumScoreEAPTest}()}

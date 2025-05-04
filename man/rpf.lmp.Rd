@@ -95,8 +95,8 @@ The Ohio State University.
 Other response model: 
 \code{\link{rpf.drm}()},
 \code{\link{rpf.gpcmp}()},
-\code{\link{rpf.grmp}()},
 \code{\link{rpf.grm}()},
+\code{\link{rpf.grmp}()},
 \code{\link{rpf.mcm}()},
 \code{\link{rpf.nrm}()}
 }

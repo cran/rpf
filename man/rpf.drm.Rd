@@ -46,8 +46,8 @@ Methods, 16}(3), 221-248.
 \seealso{
 Other response model: 
 \code{\link{rpf.gpcmp}()},
-\code{\link{rpf.grmp}()},
 \code{\link{rpf.grm}()},
+\code{\link{rpf.grmp}()},
 \code{\link{rpf.lmp}()},
 \code{\link{rpf.mcm}()},
 \code{\link{rpf.nrm}()}

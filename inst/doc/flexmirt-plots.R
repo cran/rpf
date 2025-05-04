@@ -1,4 +1,4 @@
-## ---- cache=FALSE, include=FALSE----------------------------------------------
+## ----cache=FALSE, include=FALSE-----------------------------------------------
 library(knitr)
 library(rpf)
 library(ggplot2)

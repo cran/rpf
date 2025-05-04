@@ -27,8 +27,8 @@ model.
 Other response model: 
 \code{\link{rpf.drm}()},
 \code{\link{rpf.gpcmp}()},
-\code{\link{rpf.grmp}()},
 \code{\link{rpf.grm}()},
+\code{\link{rpf.grmp}()},
 \code{\link{rpf.lmp}()},
 \code{\link{rpf.nrm}()}
 }

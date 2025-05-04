@@ -55,8 +55,8 @@ Theory Models} (pp. 43--75). Routledge.
 Other response model: 
 \code{\link{rpf.drm}()},
 \code{\link{rpf.gpcmp}()},
-\code{\link{rpf.grmp}()},
 \code{\link{rpf.grm}()},
+\code{\link{rpf.grmp}()},
 \code{\link{rpf.lmp}()},
 \code{\link{rpf.mcm}()}
 }
